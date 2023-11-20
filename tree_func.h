@@ -2,6 +2,10 @@
 #define TREE_FUNC_H
 
 
+#define NODE_READ_BUF_SIZE  5
+
+#define NIL                 "nil"
+
 typedef int TreeElem_t;
 
 struct TreeNode {
