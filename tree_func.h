@@ -2,15 +2,27 @@
 #define TREE_FUNC_H
 
 
-#define NODE_READ_BUF_SIZE  5
+#define NIL                "nil"
 
-#define NIL                 "nil"
+#define DEBUG              1
+
+#if DEBUG
+
+    #define ON_DEBUG(...)  {__VA_ARGS__;}
+#else
+
+    #define ON_DEBUG(...)
+#endif
+
+const int POISON = 0xDEAD;
+
+const int NODE_READ_BUF_SIZE = 5;
 
 typedef int TreeElem_t;
 
 struct TreeNode {
 
-    TreeElem_t value;
+    TreeElem_t data;
 
     TreeNode *left_branch;
     TreeNode *right_branch;
@@ -35,5 +47,10 @@ enum TreeFuncStatus TreeNodeCreateLeftBranch (TreeNode *node_for_add_left_branch
 
 enum TreeFuncStatus TreeNodeCreateRightBranch (TreeNode *node_for_add_right_branch);
 
+enum TreeFuncStatus TreeReadFromFile (FILE *file_with_tree, Tree *tree_for_fill);
+
+enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node_for_fill);
+
+bool IsBracketInFileStr (FILE *file_to_check_str, char bracket_type);
 
 #endif
