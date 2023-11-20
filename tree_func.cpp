@@ -64,8 +64,9 @@ enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node
 
     char *buf = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
 
+    assert (buf);
+
     //HOW TO READ VARIABLE NUM OF SYMBOLS???
-    ON_DEBUG (printf("REC"));
 
     if (IsBracketInFileStr (file_for_read_tree, '(') == false) {
 
@@ -76,7 +77,7 @@ enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node
             free (*tree_node_for_fill);
             *tree_node_for_fill = NULL;
 
-            ON_DEBUG (printf ("nil"));
+            ON_DEBUG (printf ("nil "));
 
             return TREE_STATUS_OK;
         }
@@ -88,13 +89,10 @@ enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node
 
     ON_DEBUG (printf ("("));
 
-    int value_to_add = POISON;
-    int is_value     = fscanf (file_for_read_tree, "%d", &value_to_add);
+    if (fscanf (file_for_read_tree, TREE_DATA_FORMAT, buf)) {
+        (*tree_node_for_fill) -> data = buf;
 
-    if (is_value) {
-        (*tree_node_for_fill) -> data = value_to_add;
-
-    ON_DEBUG (printf ("val"));
+    ON_DEBUG (printf ("data "));
 
     }
 

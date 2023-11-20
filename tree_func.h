@@ -2,23 +2,27 @@
 #define TREE_FUNC_H
 
 
-#define NIL                "nil"
+#define NIL                     "nil"
 
-#define DEBUG              1
+#ifndef TREE_DATA_FORMAT
+    #define TREE_DATA_FORMAT    "%s"
+#endif
+
+#define DEBUG                   1
 
 #if DEBUG
 
-    #define ON_DEBUG(...)  {__VA_ARGS__;}
+    #define ON_DEBUG(...)       {__VA_ARGS__;}
 #else
 
     #define ON_DEBUG(...)
 #endif
 
+typedef char* TreeElem_t;
+
 const int POISON = 0xDEAD;
 
-const int NODE_READ_BUF_SIZE = 5;
-
-typedef int TreeElem_t;
+const int NODE_READ_BUF_SIZE = 100;
 
 struct TreeNode {
 
