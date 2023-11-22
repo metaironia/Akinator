@@ -18,6 +18,27 @@
     #define ON_DEBUG(...)
 #endif
 
+/// 1 if tree element type is floating point number, 0 if not.
+#define IS_TREE_ELEM_FLOAT  0
+
+#define IS_TREE_ELEM_PTR    1
+
+/// Defines how to check if tree element is poison number.
+#if IS_TREE_ELEM_FLOAT
+
+    const TreeElem_t POISON_NUM = NAN;                  ///< Poison number if tree element type is floating point.
+    #define IS_TREE_ELEM_POISON(x)  isnan ((float) x)   ///< Method to check if tree element is poison.
+#else
+
+    #if IS_TREE_ELEM_PTR
+        const TreeElem_t POISON_NUM = NULL;             ///< Poison number if tree element type is pointer.
+    #else
+        const TreeElem_t POISON_NUM = 0xDEAD;               ///< Poison number if tree element type is integer.
+    #endif
+
+    #define IS_TREE_ELEM_POISON(x)  x == POISON_NUM     ///< Method to check if tree element is poison.
+#endif
+
 typedef char* TreeElem_t;
 
 const int POISON = 0xDEAD;
@@ -55,6 +76,6 @@ enum TreeFuncStatus TreeReadFromFile (FILE *file_with_tree, Tree *tree_for_fill)
 
 enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node_for_fill);
 
-bool IsBracketInFileStr (FILE *file_to_check_str, char bracket_type);
+bool IsBracketInFileStr (FILE *file_to_check_str, const char bracket_type);
 
 #endif
