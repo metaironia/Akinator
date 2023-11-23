@@ -82,7 +82,7 @@ enum TreeFuncStatus TreeNodeCreateRightBranch (TreeNode *node_for_add_right_bran
 
 enum TreeFuncStatus TreeReadFromFile (FILE *file_with_tree, Tree *tree_for_fill);
 
-enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node_for_fill);
+enum TreeFuncStatus TreeNodeRead (FILE *file_for_read_tree, TreeNode **tree_node_for_fill);
 
 enum TreeFuncStatus TreeOutputToFile (FILE *file_for_output_tree, const Tree *tree_for_output);
 

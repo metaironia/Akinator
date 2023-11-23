@@ -49,7 +49,7 @@ enum TreeFuncStatus TreeReadFromFile (FILE *file_with_tree, Tree *tree_for_fill)
     assert (file_with_tree);
     assert (tree_for_fill);
 
-    if (ReadTreeNode (file_with_tree, &(tree_for_fill -> root)) == TREE_STATUS_FAIL) {
+    if (TreeNodeRead (file_with_tree, &(tree_for_fill -> root)) == TREE_STATUS_FAIL) {
 
         fprintf (stderr, "Database is incorrect.");
 
@@ -59,13 +59,11 @@ enum TreeFuncStatus TreeReadFromFile (FILE *file_with_tree, Tree *tree_for_fill)
     return TREE_STATUS_OK;
 }
 
-enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node_for_fill) {  //PREORDER
+enum TreeFuncStatus TreeNodeRead (FILE *file_for_read_tree, TreeNode **tree_node_for_fill) {  //PREORDER
 
     assert (file_for_read_tree);
-    assert (tree_node_for_fill);
 
     char *buf = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
-
     assert (buf);
 
     //HOW TO READ VARIABLE NUM OF SYMBOLS???
@@ -75,9 +73,6 @@ enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node
         fscanf (file_for_read_tree, "%4s", buf);
 
         if (strcmp (buf, NIL) == 0) {
-
-            free (*tree_node_for_fill);
-            *tree_node_for_fill = NULL;
 
             ON_DEBUG (printf ("nil "));
 
@@ -89,34 +84,31 @@ enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node
         return TREE_STATUS_FAIL;
     }
 
-    ON_DEBUG (printf ("("));
+    ON_DEBUG (printf ("( "));
+
+    *tree_node_for_fill = CreateTreeNode ();
 
     if (fscanf (file_for_read_tree, TREE_DATA_FORMAT, buf)) {
+
         (*tree_node_for_fill) -> data = buf;
 
-    ON_DEBUG (printf ("data "));
-
+        ON_DEBUG (printf ("data "));
     }
 
     else
         return TREE_STATUS_FAIL;
 
-    TreeNodeCreateLeftBranch (*tree_node_for_fill);
-
-    if (ReadTreeNode (file_for_read_tree, &((*tree_node_for_fill) -> left_branch)) == TREE_STATUS_FAIL)
+    if (TreeNodeRead (file_for_read_tree, &((*tree_node_for_fill) -> left_branch)) == TREE_STATUS_FAIL)
         return TREE_STATUS_FAIL;
 
-
-    TreeNodeCreateRightBranch (*tree_node_for_fill);
-
-    if (ReadTreeNode (file_for_read_tree, &((*tree_node_for_fill) -> right_branch)) == TREE_STATUS_FAIL)
+    if (TreeNodeRead (file_for_read_tree, &((*tree_node_for_fill) -> right_branch)) == TREE_STATUS_FAIL)
         return TREE_STATUS_FAIL;
 
     //ON_DEBUG (printf ("|read two nodes|"));
 
     if (IsBracketInFileStr (file_for_read_tree, ')')) {
 
-    ON_DEBUG (printf (")"));
+        ON_DEBUG (printf (") "));
 
         return TREE_STATUS_OK;
     }
