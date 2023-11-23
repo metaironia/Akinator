@@ -78,7 +78,7 @@ enum TreeFuncStatus TreeDotFileCreateElements (FILE *tree_dot_file_gen_elems,
 
     assert (tree_dot_file_gen_elems);
 
-    if (tree_node_for_gen_elems != NULL) {
+    if (tree_node_for_gen_elems) {
 
         fprintf (tree_dot_file_gen_elems, NODE_START_SYMBOL "%x [shape=record, "
                                           "style = filled, fillcolor = lightgreen, "
@@ -100,7 +100,7 @@ enum TreeFuncStatus TreeDotFileDrawArrows (FILE *tree_dot_file_draw,
     assert (tree_dot_file_draw);
     assert (tree_node_for_draw_arrows);
 
-    if (tree_node_for_draw_arrows -> left_branch != NULL) {
+    if (tree_node_for_draw_arrows -> left_branch) {
 
         fprintf (tree_dot_file_draw, NODE_START_SYMBOL "%x -> " NODE_START_SYMBOL "%x;\n",
                                      (int) (tree_node_for_draw_arrows),
@@ -109,7 +109,7 @@ enum TreeFuncStatus TreeDotFileDrawArrows (FILE *tree_dot_file_draw,
         TreeDotFileDrawArrows (tree_dot_file_draw, tree_node_for_draw_arrows -> left_branch);
     }
 
-    if (tree_node_for_draw_arrows -> right_branch != NULL) {
+    if (tree_node_for_draw_arrows -> right_branch) {
 
         fprintf (tree_dot_file_draw, NODE_START_SYMBOL "%x -> " NODE_START_SYMBOL "%x;\n",
                                      (int) (tree_node_for_draw_arrows),

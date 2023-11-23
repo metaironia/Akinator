@@ -192,7 +192,7 @@ enum TreeFuncStatus TreeNodeOutputToFile (FILE *file_for_output_node,
 
     assert (file_for_output_node);
 
-    if (tree_node_for_output == NULL) {
+    if (!tree_node_for_output) {
 
         fprintf (file_for_output_node, "nil ");
 
@@ -217,7 +217,7 @@ unsigned int TreeVerify (const Tree *tree_for_verify) {      //TODO fix copypast
 
     unsigned int errors_in_tree = 0;
 
-    if (tree_for_verify == NULL) {
+    if (!tree_for_verify) {
 
         errors_in_tree |= TREE_NULL_PTR;
         LogPrintTreeError ("TREE_NULL_PTR");
@@ -236,7 +236,7 @@ unsigned int TreeNodeVerify (const TreeNode *tree_node_for_verify) {
 
     unsigned int errors_in_tree_node = 0;
 
-    if (tree_node_for_verify == NULL) {
+    if (!tree_node_for_verify) {
 
         errors_in_tree_node |= TREE_NODE_NULL_PTR;
         LogPrintTreeError ("TREE_NODE_NULL_PTR");
@@ -263,7 +263,7 @@ unsigned int TreeNodeVerify (const TreeNode *tree_node_for_verify) {
 
 enum TreeFuncStatus TreeCycledNodeSearch (const TreeNode *tree_node_for_cycle_search) {
 
-    if (tree_node_for_cycle_search == NULL)
+    if (!tree_node_for_cycle_search)
         return TREE_STATUS_OK;
 
     if (tree_node_for_cycle_search == tree_node_for_cycle_search -> left_branch ||
@@ -283,7 +283,7 @@ enum TreeFuncStatus TreeCycledNodeSearch (const TreeNode *tree_node_for_cycle_se
 
 enum TreeFuncStatus TreeNodeFromPoisonSearch (const TreeNode *tree_node_for_poison_search) {
 
-    if (tree_node_for_poison_search == NULL)
+    if (!tree_node_for_poison_search)
         return TREE_STATUS_OK;
 
     if (IS_TREE_ELEM_POISON (tree_node_for_poison_search -> data) &&
@@ -307,7 +307,7 @@ enum TreeFuncStatus TreeNodeDestruct (TreeNode **tree_node_for_destruct) {
     assert (tree_node_for_destruct);
     assert (*tree_node_for_destruct);
 
-    if (*tree_node_for_destruct == NULL)
+    if (!(*tree_node_for_destruct))
         return TREE_STATUS_OK;
 
 
