@@ -70,33 +70,21 @@ enum TreeFuncStatus TreeNodeRead (FILE *file_for_read_tree, TreeNode **tree_node
 
     if (IsBracketInFileStr (file_for_read_tree, '(') == false) {
 
-        fscanf (file_for_read_tree, "%4s", buf);
-
-        if (strcmp (buf, NIL) == 0) {
-
-            ON_DEBUG (printf ("nil "));
-
+        if (TreeNodeNilCheck (file_for_read_tree, buf) == TREE_STATUS_OK)
             return TREE_STATUS_OK;
-        }
-
-        ON_DEBUG (printf ("wtf"));
-
-        return TREE_STATUS_FAIL;
+        else
+            return TREE_STATUS_FAIL;
     }
+
 
     ON_DEBUG (printf ("( "));
 
     *tree_node_for_fill = CreateTreeNode ();
 
-    if (fscanf (file_for_read_tree, TREE_DATA_FORMAT, buf)) {
-
-        (*tree_node_for_fill) -> data = buf;
-
-        ON_DEBUG (printf ("data "));
-    }
-
-    else
+    if (TreeNodeDataRead (file_for_read_tree, *tree_node_for_fill, buf) == TREE_STATUS_FAIL)
         return TREE_STATUS_FAIL;
+
+    //recursion below
 
     if (TreeNodeRead (file_for_read_tree, &((*tree_node_for_fill) -> left_branch)) == TREE_STATUS_FAIL)
         return TREE_STATUS_FAIL;
@@ -112,6 +100,64 @@ enum TreeFuncStatus TreeNodeRead (FILE *file_for_read_tree, TreeNode **tree_node
 
         return TREE_STATUS_OK;
     }
+
+    return TREE_STATUS_FAIL;
+}
+
+enum TreeFuncStatus TreeNodeNilCheck (FILE *file_for_node_nil_check, char *buffer_for_node_check) {
+
+    assert (file_for_node_nil_check);
+    assert (buffer_for_node_check);
+
+    fscanf (file_for_node_nil_check, "%4s", buffer_for_node_check);
+
+    if (strcmp (buffer_for_node_check, NIL) == 0) {
+
+        ON_DEBUG (printf ("nil "));
+
+        return TREE_STATUS_OK;
+    }
+
+    ON_DEBUG (printf ("wtf"));
+
+    return TREE_STATUS_FAIL;
+}
+
+enum TreeFuncStatus TreeNodeDataRead (FILE *file_for_read_node_data, TreeNode *tree_node_for_data_read,
+                                      char *buffer_for_read_node_data) {
+
+    assert (file_for_read_node_data);
+    assert (tree_node_for_data_read);
+    assert (buffer_for_read_node_data);
+
+    TreeElem_t *tree_node_data = &(tree_node_for_data_read -> data);
+
+    if (IS_TREE_ELEM_PTR) {
+
+        if (fscanf (file_for_read_node_data, " \" %100[^\"]", buffer_for_read_node_data)) {  //TODO fix num of read symbols
+
+            #if IS_TREE_ELEM_PTR
+                *tree_node_data = buffer_for_read_node_data;
+
+                fseek (file_for_read_node_data, 1, SEEK_CUR);
+
+            #endif
+
+            ON_DEBUG (printf("data "));
+
+            return TREE_STATUS_OK;
+        }
+    }
+
+    else
+        if (fscanf (file_for_read_node_data, TREE_DATA_FORMAT, tree_node_data)) {
+
+            ON_DEBUG (printf ("data "));
+
+            return TREE_STATUS_OK;
+        }
+
+    ON_DEBUG (printf ("wtf "));
 
     return TREE_STATUS_FAIL;
 }
@@ -271,3 +317,4 @@ bool IsBracketInFileStr (FILE *file_to_check_str, const char bracket_type) {
     fseek (file_to_check_str, -1, SEEK_CUR);
     return false;
 }
+

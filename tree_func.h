@@ -41,8 +41,6 @@ typedef char* TreeElem_t;
     #define IS_TREE_ELEM_POISON(x)  x == POISON_NUM     ///< Method to check if tree element is poison.
 #endif
 
-const int POISON = 0xDEAD;
-
 const int NODE_READ_BUF_SIZE = 100;
 
 struct TreeNode {
@@ -83,6 +81,11 @@ enum TreeFuncStatus TreeNodeCreateRightBranch (TreeNode *node_for_add_right_bran
 enum TreeFuncStatus TreeReadFromFile (FILE *file_with_tree, Tree *tree_for_fill);
 
 enum TreeFuncStatus TreeNodeRead (FILE *file_for_read_tree, TreeNode **tree_node_for_fill);
+
+enum TreeFuncStatus TreeNodeNilCheck (FILE *file_for_node_nil_check, char *buffer_for_node_check);
+
+enum TreeFuncStatus TreeNodeDataRead (FILE *file_for_read_node_data, TreeNode *tree_node_for_data_read,
+                                      char *buffer_for_read_node_data);
 
 enum TreeFuncStatus TreeOutputToFile (FILE *file_for_output_tree, const Tree *tree_for_output);
 
