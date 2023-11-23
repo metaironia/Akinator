@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include <stdlib.h>
 
 #include "tree_log.h"
 #include "tree_func.h"
@@ -11,7 +12,6 @@ FILE *CreateLogFile (const char *log_file_name) {
     assert (log_file_name);
 
     FILE *log_file_ptr = fopen (log_file_name, "w");
-
     assert (log_file_ptr);
 
     atexit (CloseLogFile);
@@ -24,7 +24,7 @@ void CloseLogFile (void) {
     if (TREE_LOG_FILE)
         fclose (TREE_LOG_FILE);
 
-    LOG_FILE = NULL;
+    TREE_LOG_FILE = NULL;
 }
 
 enum TreeFuncStatus LogPrintTreeError (const char *error_text) {
@@ -33,7 +33,7 @@ enum TreeFuncStatus LogPrintTreeError (const char *error_text) {
 
     LOG_PRINT (TREE_LOG_FILE, "An error %s occurred. \n", error_text);
 
-    return LIST_STATUS_OK;
+    return TREE_STATUS_OK;
 }
 
 enum TreeFuncStatus TreeGraphDump (Tree *tree_for_graph_dump) {

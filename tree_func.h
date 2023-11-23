@@ -18,6 +18,8 @@
     #define ON_DEBUG(...)
 #endif
 
+typedef char* TreeElem_t;
+
 /// 1 if tree element type is floating point number, 0 if not.
 #define IS_TREE_ELEM_FLOAT  0
 
@@ -38,8 +40,6 @@
 
     #define IS_TREE_ELEM_POISON(x)  x == POISON_NUM     ///< Method to check if tree element is poison.
 #endif
-
-typedef char* TreeElem_t;
 
 const int POISON = 0xDEAD;
 
@@ -64,6 +64,14 @@ enum TreeFuncStatus {
     TREE_STATUS_FAIL
 };
 
+enum TreeErrors {
+
+    TREE_NULL_PTR,
+    TREE_ROOT_NULL_PTR,
+    TREE_CYCLED_NODE,
+    BRANCH_FROM_POISON
+};
+
 enum TreeFuncStatus TreeCtor (Tree *tree_to_create);
 
 TreeNode *CreateTreeNode (void);
@@ -76,6 +84,17 @@ enum TreeFuncStatus TreeReadFromFile (FILE *file_with_tree, Tree *tree_for_fill)
 
 enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node_for_fill);
 
+enum TreeFuncStatus TreeCycledNodeSearch (TreeNode *tree_node_for_cycle_search);
+
+enum TreeFuncStatus TreeNodeFromPoisonSearch (TreeNode *tree_node_for_poison_search);
+
+enum TreeFuncStatus TreeNodeDestruct (TreeNode **tree_node_for_destruct);
+
+enum TreeFuncStatus TreeDestruct (Tree *tree_for_destruct);
+
 bool IsBracketInFileStr (FILE *file_to_check_str, const char bracket_type);
+
+unsigned int TreeVerify (Tree *tree_for_verify );
+
 
 #endif

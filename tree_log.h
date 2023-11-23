@@ -17,6 +17,12 @@
                                                                       \
                                   } while (0)
 
+FILE *CreateLogFile (const char *log_file_name);
+
+void CloseLogFile (void);
+
+enum TreeFuncStatus LogPrintTreeError (const char *error_text);
+
 enum TreeFuncStatus TreeGraphDump (Tree *tree_for_graph_dump);
 
 enum TreeFuncStatus TreeDotFileBegin (FILE *tree_dot_file_begin);

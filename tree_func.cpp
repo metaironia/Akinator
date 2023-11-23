@@ -5,6 +5,7 @@
 #include <ctype.h>
 
 #include "tree_func.h"
+#include "tree_log.h"
 
 
 enum TreeFuncStatus TreeCtor (Tree *tree_to_create) {
@@ -125,7 +126,7 @@ enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node
 
 unsigned int TreeVerify (Tree *tree_for_verify ) {      //TODO fix copypaste in verifier
 
-    unsigned int errors_in_tree = 0;.
+    unsigned int errors_in_tree = 0;
 
     if (tree_for_verify == NULL) {
 
@@ -148,7 +149,7 @@ unsigned int TreeVerify (Tree *tree_for_verify ) {      //TODO fix copypaste in 
     if (TreeCycledNodeSearch (root_node) == TREE_STATUS_FAIL) {
 
         errors_in_tree |= TREE_CYCLED_NODE;
-        LogPrintTreeError ("TREE_CYCLED_NODE")
+        LogPrintTreeError ("TREE_CYCLED_NODE");
 
         return errors_in_tree;
     }
@@ -172,8 +173,14 @@ enum TreeFuncStatus TreeCycledNodeSearch (TreeNode *tree_node_for_cycle_search) 
 
         return TREE_STATUS_FAIL;
 
-    TreeCycledNodeSearch (tree_node_for_cycle_search -> left_branch);
-    TreeCycledNodeSearch (tree_node_for_cycle_search -> right_branch);
+    //recursion below
+
+    if (TreeCycledNodeSearch (tree_node_for_cycle_search -> left_branch)  == TREE_STATUS_FAIL ||
+        TreeCycledNodeSearch (tree_node_for_cycle_search -> right_branch) == TREE_STATUS_FAIL)
+
+        return TREE_STATUS_FAIL;
+
+    return TREE_STATUS_OK;
 }
 
 enum TreeFuncStatus TreeNodeFromPoisonSearch (TreeNode *tree_node_for_poison_search) {
@@ -181,17 +188,50 @@ enum TreeFuncStatus TreeNodeFromPoisonSearch (TreeNode *tree_node_for_poison_sea
     if (tree_node_for_poison_search == NULL)
         return TREE_STATUS_OK;
 
-    if (IS_TREE_ELEM_POISON (tree_node_for_poison_search -> value) &&
-        (tree_node_for_cycle_search -> left_branch != NULL ||
-        tree_node_for_cycle_search -> right_branch != NULL))
+    if (IS_TREE_ELEM_POISON (tree_node_for_poison_search -> data) &&
+        (tree_node_for_poison_search -> left_branch != NULL ||
+        tree_node_for_poison_search -> right_branch != NULL))
 
         return TREE_STATUS_FAIL;
 
-    TreeNodeFromPoisonSearch (tree_node_for_poison_search -> left_branch);
-    TreeNodeFromPoisonSearch (tree_node_for_poison_search -> right_branch);
+    //recursion below
+
+    if (TreeNodeFromPoisonSearch (tree_node_for_poison_search -> left_branch)  == TREE_STATUS_FAIL ||
+        TreeNodeFromPoisonSearch (tree_node_for_poison_search -> right_branch) == TREE_STATUS_FAIL)
+
+        return TREE_STATUS_FAIL;
+
+    return TREE_STATUS_OK;
 }
 
-bool IsBracketInFileStr (FILE *file_to_check_str const char bracket_type) {
+enum TreeFuncStatus TreeNodeDestruct (TreeNode **tree_node_for_destruct) {
+
+    assert (tree_node_for_destruct);
+
+    if (*tree_node_for_destruct == NULL)
+        return TREE_STATUS_OK;
+
+    TreeNodeDestruct (&((*tree_node_for_destruct) -> left_branch));
+    TreeNodeDestruct (&((*tree_node_for_destruct) -> right_branch));
+
+    memset (&((*tree_node_for_destruct) -> data), 0, sizeof (TreeElem_t));
+
+    free (*tree_node_for_destruct);
+    *tree_node_for_destruct = NULL;
+
+    return TREE_STATUS_OK;
+}
+
+enum TreeFuncStatus TreeDestruct (Tree *tree_for_destruct) {
+
+    assert (tree_for_destruct);
+
+    TreeNodeDestruct (&(tree_for_destruct -> root));
+
+    return TREE_STATUS_OK;
+}
+
+bool IsBracketInFileStr (FILE *file_to_check_str, const char bracket_type) {
 
     assert (file_to_check_str);
 
@@ -205,6 +245,3 @@ bool IsBracketInFileStr (FILE *file_to_check_str const char bracket_type) {
     fseek (file_to_check_str, -1, SEEK_CUR);
     return false;
 }
-
-
-
