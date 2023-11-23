@@ -84,9 +84,14 @@ enum TreeFuncStatus TreeReadFromFile (FILE *file_with_tree, Tree *tree_for_fill)
 
 enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node_for_fill);
 
-enum TreeFuncStatus TreeCycledNodeSearch (TreeNode *tree_node_for_cycle_search);
+enum TreeFuncStatus TreeOutputToFile (FILE *file_for_output_tree, const Tree *tree_for_output);
 
-enum TreeFuncStatus TreeNodeFromPoisonSearch (TreeNode *tree_node_for_poison_search);
+enum TreeFuncStatus TreeNodeOutputToFile (FILE *file_for_output_node,
+                                          const TreeNode *tree_node_for_output);
+
+enum TreeFuncStatus TreeCycledNodeSearch (const TreeNode *tree_node_for_cycle_search);
+
+enum TreeFuncStatus TreeNodeFromPoisonSearch (const TreeNode *tree_node_for_poison_search);
 
 enum TreeFuncStatus TreeNodeDestruct (TreeNode **tree_node_for_destruct);
 
@@ -94,7 +99,7 @@ enum TreeFuncStatus TreeDestruct (Tree *tree_for_destruct);
 
 bool IsBracketInFileStr (FILE *file_to_check_str, const char bracket_type);
 
-unsigned int TreeVerify (Tree *tree_for_verify );
+unsigned int TreeVerify (const Tree *tree_for_verify);
 
 
 #endif

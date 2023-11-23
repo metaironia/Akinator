@@ -124,7 +124,41 @@ enum TreeFuncStatus ReadTreeNode (FILE *file_for_read_tree, TreeNode **tree_node
     return TREE_STATUS_FAIL;
 }
 
-unsigned int TreeVerify (Tree *tree_for_verify ) {      //TODO fix copypaste in verifier
+enum TreeFuncStatus TreeOutputToFile (FILE *file_for_output_tree, const Tree *tree_for_output) {
+
+    assert (tree_for_output);
+    assert (file_for_output_tree);
+
+    TreeNodeOutputToFile (file_for_output_tree, tree_for_output -> root);
+
+    return TREE_STATUS_OK;
+}
+
+enum TreeFuncStatus TreeNodeOutputToFile (FILE *file_for_output_node,
+                                          const TreeNode *tree_node_for_output) {
+
+    assert (file_for_output_node);
+
+    if (tree_node_for_output == NULL) {
+
+        fprintf (file_for_output_node, "nil ");
+
+        return TREE_STATUS_OK;
+    }
+
+    fprintf (file_for_output_node, "( ");
+
+    fprintf (file_for_output_node, TREE_DATA_FORMAT " ", tree_node_for_output -> data);
+
+    TreeNodeOutputToFile (file_for_output_node, tree_node_for_output -> left_branch);
+    TreeNodeOutputToFile (file_for_output_node, tree_node_for_output -> right_branch);
+
+    fprintf (file_for_output_node, ") ");
+
+    return TREE_STATUS_OK;
+}
+
+unsigned int TreeVerify (const Tree *tree_for_verify) {      //TODO fix copypaste in verifier
 
     unsigned int errors_in_tree = 0;
 
@@ -163,7 +197,7 @@ unsigned int TreeVerify (Tree *tree_for_verify ) {      //TODO fix copypaste in 
     return errors_in_tree;
 }
 
-enum TreeFuncStatus TreeCycledNodeSearch (TreeNode *tree_node_for_cycle_search) {
+enum TreeFuncStatus TreeCycledNodeSearch (const TreeNode *tree_node_for_cycle_search) {
 
     if (tree_node_for_cycle_search == NULL)
         return TREE_STATUS_OK;
@@ -183,7 +217,7 @@ enum TreeFuncStatus TreeCycledNodeSearch (TreeNode *tree_node_for_cycle_search) 
     return TREE_STATUS_OK;
 }
 
-enum TreeFuncStatus TreeNodeFromPoisonSearch (TreeNode *tree_node_for_poison_search) {
+enum TreeFuncStatus TreeNodeFromPoisonSearch (const TreeNode *tree_node_for_poison_search) {
 
     if (tree_node_for_poison_search == NULL)
         return TREE_STATUS_OK;

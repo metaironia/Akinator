@@ -17,5 +17,9 @@ printf ("tree address = %p, root = %p, left = %p, right = %p\n",
 
     TreeGraphDump (&test_tree);
 
+    FILE *test_output_file = fopen ("test_output_file", "w");
+
+    TreeOutputToFile (test_output_file, &test_tree);
+
     return 0;
 }
