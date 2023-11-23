@@ -18,6 +18,19 @@
     #define ON_DEBUG(...)
 #endif
 
+#define TREE_VERIFY(tree)   {                                        \
+                                if (TreeVerify (tree) != 0)          \
+                                    return TREE_STATUS_FAIL;         \
+                            }
+
+#define TREE_NODE_VERIFY(tree_node)                                  \
+                            {                                        \
+                                if (TreeNodeVerify (tree_node) != 0) \
+                                    return TREE_STATUS_FAIL;         \
+                            }
+
+
+
 typedef char* TreeElem_t;
 
 /// 1 if tree element type is floating point number, 0 if not.
@@ -65,7 +78,7 @@ enum TreeFuncStatus {
 enum TreeErrors {
 
     TREE_NULL_PTR,
-    TREE_ROOT_NULL_PTR,
+    TREE_NODE_NULL_PTR,
     TREE_CYCLED_NODE,
     BRANCH_FROM_POISON
 };
@@ -103,6 +116,8 @@ enum TreeFuncStatus TreeDestruct (Tree *tree_for_destruct);
 bool IsBracketInFileStr (FILE *file_to_check_str, const char bracket_type);
 
 unsigned int TreeVerify (const Tree *tree_for_verify);
+
+unsigned int TreeNodeVerify (const TreeNode *tree_node_for_verify);
 
 
 #endif

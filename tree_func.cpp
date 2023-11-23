@@ -14,6 +14,8 @@ enum TreeFuncStatus TreeCtor (Tree *tree_to_create) {
 
     (tree_to_create -> root) = CreateTreeNode ();
 
+    TREE_VERIFY (tree_to_create);
+
     return TREE_STATUS_OK;
 }
 
@@ -28,18 +30,22 @@ TreeNode *CreateTreeNode (void) {
 
 enum TreeFuncStatus TreeNodeCreateLeftBranch (TreeNode *node_for_add_left_branch) {
 
-    assert (node_for_add_left_branch);
+    TREE_NODE_VERIFY (node_for_add_left_branch);
 
     (node_for_add_left_branch -> left_branch) = CreateTreeNode ();
+
+    TREE_NODE_VERIFY (node_for_add_left_branch);
 
     return TREE_STATUS_OK;
 }
 
 enum TreeFuncStatus TreeNodeCreateRightBranch (TreeNode *node_for_add_right_branch) {
 
-    assert (node_for_add_right_branch);
+    TREE_NODE_VERIFY (node_for_add_right_branch);
 
     (node_for_add_right_branch -> right_branch) = CreateTreeNode ();
+
+    TREE_NODE_VERIFY (node_for_add_right_branch);
 
     return TREE_STATUS_OK;
 }
@@ -47,7 +53,8 @@ enum TreeFuncStatus TreeNodeCreateRightBranch (TreeNode *node_for_add_right_bran
 enum TreeFuncStatus TreeReadFromFile (FILE *file_with_tree, Tree *tree_for_fill) {
 
     assert (file_with_tree);
-    assert (tree_for_fill);
+
+    TREE_VERIFY (tree_for_fill);
 
     if (TreeNodeRead (file_with_tree, &(tree_for_fill -> root)) == TREE_STATUS_FAIL) {
 
@@ -55,6 +62,8 @@ enum TreeFuncStatus TreeReadFromFile (FILE *file_with_tree, Tree *tree_for_fill)
 
         return TREE_STATUS_FAIL;
     }
+
+    TREE_VERIFY (tree_for_fill);
 
     return TREE_STATUS_OK;
 }
@@ -81,6 +90,8 @@ enum TreeFuncStatus TreeNodeRead (FILE *file_for_read_tree, TreeNode **tree_node
 
     *tree_node_for_fill = CreateTreeNode ();
 
+    TREE_NODE_VERIFY (*tree_node_for_fill);
+
     if (TreeNodeDataRead (file_for_read_tree, *tree_node_for_fill, buf) == TREE_STATUS_FAIL)
         return TREE_STATUS_FAIL;
 
@@ -93,6 +104,8 @@ enum TreeFuncStatus TreeNodeRead (FILE *file_for_read_tree, TreeNode **tree_node
         return TREE_STATUS_FAIL;
 
     //ON_DEBUG (printf ("|read two nodes|"));
+
+    TREE_NODE_VERIFY (*tree_node_for_fill);
 
     if (IsBracketInFileStr (file_for_read_tree, ')')) {
 
@@ -127,8 +140,9 @@ enum TreeFuncStatus TreeNodeDataRead (FILE *file_for_read_node_data, TreeNode *t
                                       char *buffer_for_read_node_data) {
 
     assert (file_for_read_node_data);
-    assert (tree_node_for_data_read);
     assert (buffer_for_read_node_data);
+
+    TREE_NODE_VERIFY (tree_node_for_data_read);
 
     TreeElem_t *tree_node_data = &(tree_node_for_data_read -> data);
 
@@ -164,7 +178,8 @@ enum TreeFuncStatus TreeNodeDataRead (FILE *file_for_read_node_data, TreeNode *t
 
 enum TreeFuncStatus TreeOutputToFile (FILE *file_for_output_tree, const Tree *tree_for_output) {
 
-    assert (tree_for_output);
+    TREE_VERIFY (tree_for_output);
+
     assert (file_for_output_tree);
 
     TreeNodeOutputToFile (file_for_output_tree, tree_for_output -> root);
@@ -183,6 +198,8 @@ enum TreeFuncStatus TreeNodeOutputToFile (FILE *file_for_output_node,
 
         return TREE_STATUS_OK;
     }
+
+    TREE_NODE_VERIFY (tree_node_for_output);
 
     fprintf (file_for_output_node, "( ");
 
@@ -210,29 +227,38 @@ unsigned int TreeVerify (const Tree *tree_for_verify) {      //TODO fix copypast
 
     TreeNode *root_node = tree_for_verify -> root;
 
-    if (root_node == NULL) {
+    errors_in_tree |= TreeNodeVerify (root_node);
 
-        errors_in_tree |= TREE_ROOT_NULL_PTR;
-        LogPrintTreeError ("TREE_ROOT_NULL_PTR");
+    return errors_in_tree;
+}
 
-        return errors_in_tree;
+unsigned int TreeNodeVerify (const TreeNode *tree_node_for_verify) {
+
+    unsigned int errors_in_tree_node = 0;
+
+    if (tree_node_for_verify == NULL) {
+
+        errors_in_tree_node |= TREE_NODE_NULL_PTR;
+        LogPrintTreeError ("TREE_NODE_NULL_PTR");
+
+        return errors_in_tree_node;
     }
 
-    if (TreeCycledNodeSearch (root_node) == TREE_STATUS_FAIL) {
+    if (TreeCycledNodeSearch (tree_node_for_verify) == TREE_STATUS_FAIL) {
 
-        errors_in_tree |= TREE_CYCLED_NODE;
+        errors_in_tree_node |= TREE_CYCLED_NODE;
         LogPrintTreeError ("TREE_CYCLED_NODE");
 
-        return errors_in_tree;
+        return errors_in_tree_node;
     }
 
-    if (TreeNodeFromPoisonSearch (root_node) == TREE_STATUS_FAIL) {
+    if (TreeNodeFromPoisonSearch (tree_node_for_verify) == TREE_STATUS_FAIL) {
 
-        errors_in_tree |= BRANCH_FROM_POISON;
+        errors_in_tree_node |= BRANCH_FROM_POISON;
         LogPrintTreeError ("BRANCH_FROM_POISON");
     }
 
-    return errors_in_tree;
+    return errors_in_tree_node;
 }
 
 enum TreeFuncStatus TreeCycledNodeSearch (const TreeNode *tree_node_for_cycle_search) {
@@ -279,9 +305,11 @@ enum TreeFuncStatus TreeNodeFromPoisonSearch (const TreeNode *tree_node_for_pois
 enum TreeFuncStatus TreeNodeDestruct (TreeNode **tree_node_for_destruct) {
 
     assert (tree_node_for_destruct);
+    assert (*tree_node_for_destruct);
 
     if (*tree_node_for_destruct == NULL)
         return TREE_STATUS_OK;
+
 
     TreeNodeDestruct (&((*tree_node_for_destruct) -> left_branch));
     TreeNodeDestruct (&((*tree_node_for_destruct) -> right_branch));
@@ -315,6 +343,7 @@ bool IsBracketInFileStr (FILE *file_to_check_str, const char bracket_type) {
         return true;
 
     fseek (file_to_check_str, -1, SEEK_CUR);
+
     return false;
 }
 
