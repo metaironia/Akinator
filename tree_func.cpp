@@ -318,6 +318,9 @@ enum TreeFuncStatus TreeNodeDestruct (TreeNode **tree_node_for_destruct) {
     TreeNodeDestruct (&((*tree_node_for_destruct) -> left_branch));
     TreeNodeDestruct (&((*tree_node_for_destruct) -> right_branch));
 
+    if (IS_TREE_ELEM_STRING)
+        free ((*tree_node_for_destruct) -> data);
+
     memset (&((*tree_node_for_destruct) -> data), 0, sizeof (TreeElem_t));
 
     free (*tree_node_for_destruct);

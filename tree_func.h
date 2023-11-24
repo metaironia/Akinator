@@ -8,7 +8,7 @@
     #define TREE_DATA_FORMAT    "%s"
 #endif
 
-#define DEBUG                   1
+#define DEBUG                   0
 
 #if DEBUG
 

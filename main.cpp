@@ -2,7 +2,10 @@
 
 #include "tree_func.h"
 #include "tree_log.h"
+
 #include "akinator_func.h"
+#include "akinator_input.h"
+#include "akinator_output.h"
 
 int main (int argc, const char *argv[]) {
 
@@ -10,28 +13,22 @@ int main (int argc, const char *argv[]) {
 
     TreeCtor (&akinator_tree);
 
-    if (CommandLineArgChecker (argc, argv) == AKINATOR_STATUS_FAIL)
+    if (AkinatorBegin (&akinator_tree, argc, argv) == AKINATOR_STATUS_FAIL)
         return -1;
 
-    FILE *akinator_file_for_read = fopen (AkinatorFileDatabaseName (argv), "r");
+    //TreeGraphDump (&akinator_tree);
 
-    if (TreeReadFromFile (akinator_file_for_read, &akinator_tree) == TREE_STATUS_FAIL)
-        return -2;
+    do {
 
-    fclose (akinator_file_for_read);
-    akinator_file_for_read = NULL;
+        if (AkinatorGuess (&akinator_tree) == AKINATOR_STATUS_FAIL) {
 
-    TreeGraphDump (&akinator_tree);
+            fprintf (stderr, "ERROR WHILE GUESSING\n");
+            return -2;
+        }
 
-    if (AkinatorGuess (&akinator_tree) == AKINATOR_STATUS_FAIL) {
+    } while (AkinatorContinue () == USER_ANSWER_YES);
 
-        fprintf (stderr, "ERROR WHILE GUESSING\n");
-
-        return -1;
-    }
-
-    while (AkinatorExit (AkinatorFileDatabaseName (argv), &akinator_tree) != AKINATOR_STATUS_OK)
-        printf ("Enter YES or NO only.\n");
+    AkinatorExit (AkinatorFileDatabaseName (argv), &akinator_tree);
 
     return 0;
 }
