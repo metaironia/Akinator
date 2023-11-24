@@ -39,6 +39,8 @@ enum UserAnswer {
     USER_ANSWER_ERROR
 };
 
+//enum AkinatorFuncStatus AkinatorChooseMode (Tree *akinator_tree_for_mode_choose);
+
 enum AkinatorFuncStatus AkinatorReadDatabase (Tree *akinator_for_begin, const int akinator_argc,
                                               const char **akinator_argv);
 
@@ -50,6 +52,22 @@ enum AkinatorFuncStatus AkinatorLastNodeSwap (TreeNode *akinator_node_for_swap,
                                               char *user_answer_new_person);
 
 enum AkinatorFuncStatus AkinatorDescription (const Tree *akinator_tree_for_description);
+
+enum AkinatorFuncStatus AkinatorDifference (const Tree *akinator_tree_for_diff);
+
+enum AkinatorFuncStatus AkinatorOneDescriptionPrint (const TreeNode *tree_node_for_desc,
+                                                     const TreeNextBranch node_next_branch);
+
+enum AkinatorFuncStatus AkinatorWholeDescriptionPrint (TreeNode *tree_node_for_desc,
+                                                       TreeNextBranch node_next_branch,
+                                                       Stack *stack_tree_path_to_person_print);
+
+enum AkinatorFuncStatus AkinatorBranchSwitch (TreeNode **ptr_tree_node_for_switch,
+                                              const TreeNextBranch node_next_branch);
+
+enum AkinatorFuncStatus AkinatorInputAndFindThePerson (const Tree *tree_for_find_person,
+                                                       char *array_for_person_name,
+                                                       Stack *stack_for_path_to_person);
 
 enum UserAnswer AkinatorContinue (void);
 

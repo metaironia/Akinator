@@ -13,6 +13,15 @@
 #include "akinator_input.h"
 
 
+enum AkinatorFuncStatus AkinatorChooseMode (Tree *akinator_tree_for_mode_choose) {
+
+    AKINATOR_TREE_VERIFY (akinator_tree_for_mode_choose);
+
+
+
+    return AKINATOR_STATUS_OK;
+}
+
 enum AkinatorFuncStatus AkinatorGuess (Tree *akinator_tree_database) {
 
     AKINATOR_TREE_VERIFY (akinator_tree_database);
@@ -128,47 +137,202 @@ enum AkinatorFuncStatus AkinatorDescription (const Tree *akinator_tree_for_descr
     char *array_for_description_ask = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
     assert (array_for_description_ask);
 
-    printf ("What person you have on the mind?\n");
-
-    ScanUserString (array_for_description_ask, NODE_READ_BUF_SIZE);
-
     Stack stack_tree_path_to_element = {};
-
     StackCtor (&stack_tree_path_to_element, 1);
 
-    if (TreeElementFind (akinator_tree_for_description,
-                         array_for_description_ask, &stack_tree_path_to_element) == TREE_STATUS_FAIL) {
+    if (AkinatorInputAndFindThePerson (akinator_tree_for_description, array_for_description_ask,
+                                       &stack_tree_path_to_element) == AKINATOR_STATUS_FAIL)
+
+        return AKINATOR_STATUS_FAIL;
+
+    TreeNode *tree_node_current = akinator_tree_for_description -> root;
+
+    printf ("%s is ", array_for_description_ask);
+
+    TreeNextBranch next_branch = NODE_NO_BRANCH;
+
+    AkinatorWholeDescriptionPrint (tree_node_current, next_branch, &stack_tree_path_to_element);
+
+    printf ("that's all.\n");
+
+    return AKINATOR_STATUS_OK;
+}
+
+enum AkinatorFuncStatus AkinatorOneDescriptionPrint (const TreeNode *tree_node_for_desc,
+                                                     const TreeNextBranch node_next_branch) {
+
+    AKINATOR_NODE_VERIFY (tree_node_for_desc);
+
+    switch (node_next_branch) {
+
+        case NODE_LEFT_BRANCH:
+            printf ("%s, ", tree_node_for_desc -> data);
+            break;
+
+        case NODE_RIGHT_BRANCH:
+            printf ("not %s, ", tree_node_for_desc -> data);
+            break;
+
+        case NODE_NO_BRANCH:
+        default:
+            fprintf (stderr, "SOMETHING WENT WRONG\n");
+            return AKINATOR_STATUS_FAIL;
+    }
+
+    return AKINATOR_STATUS_OK;
+}
+
+enum AkinatorFuncStatus AkinatorWholeDescriptionPrint (TreeNode *tree_node_for_desc,
+                                                       TreeNextBranch node_next_branch,
+                                                       Stack *stack_tree_path_to_person_print) {
+
+    assert (stack_tree_path_to_person_print);
+
+    AKINATOR_NODE_VERIFY (tree_node_for_desc);
+
+    while ((stack_tree_path_to_person_print -> stack_size) >= 1) {
+
+        node_next_branch = (TreeNextBranch) StackPop (stack_tree_path_to_person_print);
+
+        if (AkinatorOneDescriptionPrint (tree_node_for_desc, node_next_branch) == AKINATOR_STATUS_FAIL)
+            return AKINATOR_STATUS_FAIL;
+
+        if (AkinatorBranchSwitch (&tree_node_for_desc, node_next_branch) == AKINATOR_STATUS_FAIL)
+            return AKINATOR_STATUS_FAIL;
+    }
+
+    return AKINATOR_STATUS_OK;
+}
+
+enum AkinatorFuncStatus AkinatorBranchSwitch (TreeNode **ptr_tree_node_for_switch,
+                                              const TreeNextBranch node_next_branch) {
+
+    assert (ptr_tree_node_for_switch);
+
+    AKINATOR_NODE_VERIFY (*ptr_tree_node_for_switch);
+
+    switch (node_next_branch) {
+
+        case NODE_LEFT_BRANCH:
+            *ptr_tree_node_for_switch = (*ptr_tree_node_for_switch) -> left_branch;
+            break;
+
+        case NODE_RIGHT_BRANCH:
+            *ptr_tree_node_for_switch = (*ptr_tree_node_for_switch) -> right_branch;
+            break;
+
+        case NODE_NO_BRANCH:
+        default:
+            fprintf (stderr, "SOMETHING WENT WRONG\n");
+            return AKINATOR_STATUS_FAIL;
+    }
+
+    return AKINATOR_STATUS_OK;
+}
+
+enum AkinatorFuncStatus AkinatorInputAndFindThePerson (const Tree *tree_for_find_person,
+                                                       char *array_for_person_name,
+                                                       Stack *stack_for_path_to_person) {
+
+    AKINATOR_TREE_VERIFY (tree_for_find_person);
+
+    assert (array_for_person_name);
+    assert (stack_for_path_to_person);
+
+    printf ("What person do you have on the mind?\n");
+
+    ScanUserString (array_for_person_name, NODE_READ_BUF_SIZE);
+
+    if (TreeElementFind (tree_for_find_person,
+                         array_for_person_name, stack_for_path_to_person) == TREE_STATUS_FAIL) {
 
         printf ("NO MATCHING RESULTS.\n");
 
         return AKINATOR_STATUS_FAIL;
     }
 
-    TreeNode *tree_node_current = akinator_tree_for_description -> root;
+    printf ("%s naiden.\n", array_for_person_name);
 
-    printf ("%s is ", array_for_description_ask);
+    return AKINATOR_STATUS_OK;
+}
 
-    while (stack_tree_path_to_element.stack_size >= 1) {
+enum AkinatorFuncStatus AkinatorDifference (const Tree *akinator_tree_for_diff) {
 
-        switch (StackPop (&stack_tree_path_to_element)) {
+    AKINATOR_TREE_VERIFY (akinator_tree_for_diff);
 
-            case 1:
-                printf ("%s, ", tree_node_current -> data);
-                tree_node_current = tree_node_current -> left_branch;
-                break;
+    char *array_for_first_person_name = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
+    assert (array_for_first_person_name);
 
-            case 0:
-                printf ("not %s, ", tree_node_current -> data);
-                tree_node_current = tree_node_current -> right_branch;
-                break;
+    Stack stack_tree_path_first_person = {};
+    StackCtor (&stack_tree_path_first_person, 1);
 
-            default:
-                fprintf (stderr, "SOMETHING WENT WRONG\n");
-                return AKINATOR_STATUS_FAIL;
+    if (AkinatorInputAndFindThePerson (akinator_tree_for_diff, array_for_first_person_name,
+                                       &stack_tree_path_first_person) == AKINATOR_STATUS_FAIL)
+
+        return AKINATOR_STATUS_FAIL;
+
+    char *array_for_second_person_name = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
+    assert (array_for_second_person_name);
+
+    Stack stack_tree_path_second_person = {};
+    StackCtor (&stack_tree_path_second_person, 1);
+
+    if (AkinatorInputAndFindThePerson (akinator_tree_for_diff, array_for_second_person_name,
+                                       &stack_tree_path_second_person) == AKINATOR_STATUS_FAIL)
+
+        return AKINATOR_STATUS_FAIL;
+
+    printf ("They are alike in that they are the ");
+
+    TreeNextBranch first_person_next_branch  = NODE_NO_BRANCH;
+    TreeNode *first_person_current_node      = akinator_tree_for_diff -> root;
+
+    TreeNextBranch second_person_next_branch = NODE_NO_BRANCH;
+    TreeNode *second_person_current_node     = akinator_tree_for_diff -> root;
+
+    while ((stack_tree_path_first_person.stack_size >= 1)) {
+
+        if ((first_person_next_branch  = (TreeNextBranch) StackPop (&stack_tree_path_first_person)) !=
+            (second_person_next_branch = (TreeNextBranch) StackPop (&stack_tree_path_second_person))) {
+
+            StackPush (&stack_tree_path_first_person, first_person_next_branch);
+            StackPush (&stack_tree_path_second_person, second_person_next_branch);
+
+            break;
         }
+
+        if (AkinatorOneDescriptionPrint (first_person_current_node,
+                                         first_person_next_branch) == AKINATOR_STATUS_FAIL)
+            return AKINATOR_STATUS_FAIL;
+
+        if (AkinatorBranchSwitch (&first_person_current_node,
+                                  first_person_next_branch) == AKINATOR_STATUS_FAIL ||
+            AkinatorBranchSwitch (&second_person_current_node,
+                                  second_person_next_branch) == AKINATOR_STATUS_FAIL)
+
+            return AKINATOR_STATUS_FAIL;
     }
 
-    printf ("that's all.\n");
+    if (stack_tree_path_first_person.stack_size  == 0 ||
+        stack_tree_path_second_person.stack_size == 0)
+
+        return AKINATOR_STATUS_OK;
+
+    printf ("but %s ", array_for_first_person_name);
+
+    if (AkinatorWholeDescriptionPrint (first_person_current_node, first_person_next_branch,
+                                       &stack_tree_path_first_person) == AKINATOR_STATUS_FAIL)
+
+        return AKINATOR_STATUS_FAIL;
+
+    printf ("and %s ", array_for_second_person_name);
+
+    if (AkinatorWholeDescriptionPrint (second_person_current_node, second_person_next_branch,
+                                       &stack_tree_path_second_person) == AKINATOR_STATUS_FAIL)
+
+        return AKINATOR_STATUS_FAIL;
+
+    printf ("and that's all.\n");
 
     return AKINATOR_STATUS_OK;
 }
