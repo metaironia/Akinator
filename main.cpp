@@ -4,15 +4,22 @@
 #include "tree_log.h"
 #include "akinator_func.h"
 
-int main (void) {
+int main (int argc, const char *argv[]) {
 
     Tree akinator_tree = {};
 
     TreeCtor (&akinator_tree);
 
-    FILE *akinator_file = fopen ("akinator_database.txt", "r");
+    if (CommandLineArgChecker (argc, argv) == AKINATOR_STATUS_FAIL)
+        return -1;
 
-    TreeReadFromFile (akinator_file, &akinator_tree);
+    FILE *akinator_file_for_read = fopen (AkinatorFileDatabaseName (argv), "r");
+
+    if (TreeReadFromFile (akinator_file_for_read, &akinator_tree) == TREE_STATUS_FAIL)
+        return -2;
+
+    fclose (akinator_file_for_read);
+    akinator_file_for_read = NULL;
 
     TreeGraphDump (&akinator_tree);
 
@@ -23,9 +30,8 @@ int main (void) {
         return -1;
     }
 
-    FILE *test_output_file = fopen ("test_output_file", "w");
-
-    TreeOutputToFile (test_output_file, &akinator_tree);
+    while (AkinatorExit (AkinatorFileDatabaseName (argv), &akinator_tree) != AKINATOR_STATUS_OK)
+        printf ("Enter YES or NO only.\n");
 
     return 0;
 }

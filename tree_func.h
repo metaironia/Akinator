@@ -37,6 +37,8 @@
 
 typedef char* TreeElem_t;
 
+#define IS_TREE_ELEM_STRING 1
+
 /// 1 if tree element type is floating point number, 0 if not.
 #define IS_TREE_ELEM_FLOAT  0
 

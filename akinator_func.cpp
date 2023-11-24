@@ -93,7 +93,7 @@ enum UserAnswer AskUserLastNode (TreeNode *akinator_tree_node_for_last_ask,
 
     char *array_new_question_node = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
 
-    ScanUserString (array_for_last_ask, NODE_READ_BUF_SIZE);
+    ScanUserString (array_new_question_node, NODE_READ_BUF_SIZE);
 
     akinator_tree_node_for_last_ask -> data = array_new_question_node;
 
@@ -165,11 +165,55 @@ enum StringFuncStatus RemoveSpacesFromStringEnd (char *array_for_remove_end_spac
     return STRING_STATUS_OK;
 }
 
-//enum AkinatorFuncStatus AkinatorExit (const Tree *akinator_tree_at_exit) {
-//
-//    AKINATOR_TREE_VERIFY (akinator_tree_at_exit);
-//
-//    printf ("Do you want to save new data?\n");
-//
-//    return AKINATOR_STATUS_OK;
-//}
+enum AkinatorFuncStatus AkinatorExit (const char *file_name_output,
+                                      const Tree *akinator_tree_at_exit) {
+
+    AKINATOR_TREE_VERIFY (akinator_tree_at_exit);
+
+    printf ("Do you want to save new data?\n");
+
+    char *user_answer = (char *) calloc (MAX_WORD_LENGTH, sizeof (char));
+
+    ScanUserString (user_answer, MAX_WORD_LENGTH);
+
+    if (strcmp (user_answer, "YES") == 0) {
+
+        FILE *akinator_file_for_write = fopen (file_name_output, "w");
+
+        TreeOutputToFile (akinator_file_for_write, akinator_tree_at_exit);
+
+        fclose (akinator_file_for_write);
+
+        return AKINATOR_STATUS_OK;
+    }
+
+    if (strcmp (user_answer, "NO") == 0)
+        return AKINATOR_STATUS_OK;
+
+    return AKINATOR_STATUS_FAIL;
+}
+
+enum AkinatorFuncStatus CommandLineArgChecker (const int argcc, const char *argvv[]) {
+
+    assert (argvv);
+
+    if (argcc < 2) {
+
+        fprintf (stderr, "Not enough arguments.");
+        return AKINATOR_STATUS_FAIL;
+    }
+
+    if (argcc > 2) {
+
+        fprintf (stderr, "Too much arguments.");
+        return AKINATOR_STATUS_FAIL;
+    }
+
+    return AKINATOR_STATUS_OK;
+}
+
+const char *AkinatorFileDatabaseName (const char *argvv[]) {
+
+    return argvv[1];
+}
+

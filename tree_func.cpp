@@ -203,7 +203,11 @@ enum TreeFuncStatus TreeNodeOutputToFile (FILE *file_for_output_node,
 
     fprintf (file_for_output_node, "( ");
 
-    fprintf (file_for_output_node, TREE_DATA_FORMAT " ", tree_node_for_output -> data);
+    if (IS_TREE_ELEM_STRING)
+        fprintf (file_for_output_node, "\"" TREE_DATA_FORMAT "\" ", tree_node_for_output -> data);
+
+    else
+        fprintf (file_for_output_node, TREE_DATA_FORMAT " ", tree_node_for_output -> data);
 
     TreeNodeOutputToFile (file_for_output_node, tree_node_for_output -> left_branch);
     TreeNodeOutputToFile (file_for_output_node, tree_node_for_output -> right_branch);

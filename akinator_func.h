@@ -17,6 +17,8 @@
                                                  return AKINATOR_STATUS_FAIL;     \
                                          }
 
+const int MAX_WORD_LENGTH = 10;
+
 enum AkinatorFuncStatus {
 
     AKINATOR_STATUS_OK,
@@ -56,6 +58,13 @@ enum StringFuncStatus CheckIfStringTooLong (const char *array_for_string_check,
 
 enum StringFuncStatus RemoveSpacesFromStringEnd (char *array_for_remove_end_spaces,
                                                  const size_t size_array_for_space_remove);
+
+enum AkinatorFuncStatus AkinatorExit (const char *file_name_output,
+                                      const Tree *akinator_tree_at_exit);
+
+enum AkinatorFuncStatus CommandLineArgChecker (const int argcc, const char *argvv[]);
+
+const char *AkinatorFileDatabaseName (const char *argvv[]);
 
 
 #endif
