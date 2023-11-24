@@ -59,7 +59,7 @@ typedef char* TreeElem_t;
         const TreeElem_t TREE_POISON_NUM = 0xDEAD;           ///< Poison number if tree element type is integer.
     #endif
 
-    #define IS_TREE_ELEM_POISON(x)  x == TREE_POISON_NUM     ///< Method to check if tree element is poison.
+    #define IS_TREE_ELEM_POISON(x)  (x == TREE_POISON_NUM)   ///< Method to check if tree element is poison.
 #endif
 
 const int NODE_READ_BUF_SIZE = 100;
@@ -113,12 +113,12 @@ enum TreeFuncStatus TreeOutputToFile (FILE *file_for_output_tree, const Tree *tr
 enum TreeFuncStatus TreeNodeOutputToFile (FILE *file_for_output_node,
                                           const TreeNode *tree_node_for_output);
 
-enum TreeFuncStatus TreeElementFind (const Tree *tree_for_element_find,
-                                     const TreeElem_t tree_data_to_find);
+enum TreeFuncStatus TreeElementFind (const Tree *tree_for_element_find, const TreeElem_t tree_data_to_find,
+                                     Stack *stack_tree_path);
 
 enum TreeFuncStatus TreeNodeElementFind (const TreeNode *tree_node_for_element_find,
                                          const TreeElem_t tree_node_data_to_find,
-                                         Stack *tree_node_path_stack);
+                                         Stack *stack_tree_node_path);
 
 enum TreeFuncStatus TreeCompareData (const TreeNode *tree_node_for_cmp_data,
                                      const TreeElem_t data_to_cmp);

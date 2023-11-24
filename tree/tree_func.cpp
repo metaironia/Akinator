@@ -88,7 +88,7 @@ enum TreeFuncStatus TreeNodeRead (FILE *file_for_read_tree, TreeNode **tree_node
     }
 
 
-    ON_DEBUG (printf ("( "));
+    ON_TREE_DEBUG (printf ("( "));
 
     *tree_node_for_fill = CreateTreeNode ();
 
@@ -105,13 +105,13 @@ enum TreeFuncStatus TreeNodeRead (FILE *file_for_read_tree, TreeNode **tree_node
     if (TreeNodeRead (file_for_read_tree, &((*tree_node_for_fill) -> right_branch)) == TREE_STATUS_FAIL)
         return TREE_STATUS_FAIL;
 
-    //ON_DEBUG (printf ("|read two nodes|"));
+    //ON_TREE_DEBUG (printf ("|read two nodes|"));
 
     TREE_NODE_VERIFY (*tree_node_for_fill);
 
     if (IsBracketInFileStr (file_for_read_tree, ')')) {
 
-        ON_DEBUG (printf (") "));
+        ON_TREE_DEBUG (printf (") "));
 
         return TREE_STATUS_OK;
     }
@@ -128,12 +128,12 @@ enum TreeFuncStatus TreeNodeNilCheck (FILE *file_for_node_nil_check, char *buffe
 
     if (strcmp (buffer_for_node_check, NIL) == 0) {
 
-        ON_DEBUG (printf ("nil "));
+        ON_TREE_DEBUG (printf ("nil "));
 
         return TREE_STATUS_OK;
     }
 
-    ON_DEBUG (printf ("wtf"));
+    ON_TREE_DEBUG (printf ("wtf"));
 
     return TREE_STATUS_FAIL;
 }
@@ -159,7 +159,7 @@ enum TreeFuncStatus TreeNodeDataRead (FILE *file_for_read_node_data, TreeNode *t
 
             #endif
 
-            ON_DEBUG (printf("data "));
+            ON_TREE_DEBUG (printf("data "));
 
             return TREE_STATUS_OK;
         }
@@ -168,12 +168,12 @@ enum TreeFuncStatus TreeNodeDataRead (FILE *file_for_read_node_data, TreeNode *t
     else
         if (fscanf (file_for_read_node_data, TREE_DATA_FORMAT, tree_node_data)) {
 
-            ON_DEBUG (printf ("data "));
+            ON_TREE_DEBUG (printf ("data "));
 
             return TREE_STATUS_OK;
         }
 
-    ON_DEBUG (printf ("wtf "));
+    ON_TREE_DEBUG (printf ("wtf "));
 
     return TREE_STATUS_FAIL;
 }
@@ -219,20 +219,16 @@ enum TreeFuncStatus TreeNodeOutputToFile (FILE *file_for_output_node,
     return TREE_STATUS_OK;
 }
 
-enum TreeFuncStatus TreeElementFind (const Tree *tree_for_element_find,
-                                     const TreeElem_t tree_data_to_find) {
+enum TreeFuncStatus TreeElementFind (const Tree *tree_for_element_find, const TreeElem_t tree_data_to_find,
+                                     Stack *stack_tree_path) {
 
     TREE_VERIFY (tree_for_element_find);
 
     if (IS_TREE_ELEM_STRING)
         assert (tree_data_to_find);
 
-    Stack tree_path_stack = {};
-
-    StackCtor (&tree_path_stack, 1);
-
     if (TreeNodeElementFind (tree_for_element_find -> root, tree_data_to_find,
-                             &tree_path_stack) == TREE_STATUS_OK)
+                             stack_tree_path) == TREE_STATUS_OK)
 
         return TREE_STATUS_OK;
 
@@ -241,7 +237,7 @@ enum TreeFuncStatus TreeElementFind (const Tree *tree_for_element_find,
 
 enum TreeFuncStatus TreeNodeElementFind (const TreeNode *tree_node_for_element_find,
                                          const TreeElem_t tree_node_data_to_find,
-                                         Stack *tree_node_path_stack) {
+                                         Stack *stack_tree_node_path) {
 
     if (!tree_node_for_element_find)
         return TREE_STATUS_FAIL;
@@ -257,17 +253,17 @@ enum TreeFuncStatus TreeNodeElementFind (const TreeNode *tree_node_for_element_f
     //recursion below
 
     if (TreeNodeElementFind (tree_node_for_element_find -> left_branch,
-                             tree_node_data_to_find, tree_node_path_stack) == TREE_STATUS_OK) {
+                             tree_node_data_to_find, stack_tree_node_path) == TREE_STATUS_OK) {
 
-        StackPush (tree_node_path_stack, 1);   //TODO fix nums here
+        StackPush (stack_tree_node_path, 1);   //TODO fix nums here
 
         return TREE_STATUS_OK;
     }
 
     if (TreeNodeElementFind (tree_node_for_element_find -> right_branch,
-                             tree_node_data_to_find, tree_node_path_stack) == TREE_STATUS_OK) {
+                             tree_node_data_to_find, stack_tree_node_path) == TREE_STATUS_OK) {
 
-        StackPush (tree_node_path_stack, 0);   //TODO fix nums here
+        StackPush (stack_tree_node_path, 0);   //TODO fix nums here
 
         return TREE_STATUS_OK;
     }

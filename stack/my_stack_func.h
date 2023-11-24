@@ -65,7 +65,7 @@ typedef int Elem_t;
 #else
 
     const Elem_t POISON_NUM = 0xDEAD;                   ///< Poison number if stack element type is integer.
-    #define IS_STACK_ELEM_POISON(x)  x == POISON_NUM    ///< Method to check if stack element is poison.
+    #define IS_STACK_ELEM_POISON(x)  (x == POISON_NUM)  ///< Method to check if stack element is poison.
 #endif
 
 /// Constant for canaries in stack.

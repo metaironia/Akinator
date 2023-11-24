@@ -104,8 +104,8 @@ enum UserAnswer AkinatorContinue (void) {
     return user_answer_status;
 }
 
-enum AkinatorFuncStatus AkinatorBegin (Tree *akinator_for_begin, const int akinator_argc,
-                                       const char **akinator_argv) {
+enum AkinatorFuncStatus AkinatorReadDatabase (Tree *akinator_for_begin, const int akinator_argc,
+                                              const char **akinator_argv) {
 
     if (CommandLineArgChecker (akinator_argc, akinator_argv) == AKINATOR_STATUS_FAIL)
         return AKINATOR_STATUS_FAIL;
@@ -121,15 +121,54 @@ enum AkinatorFuncStatus AkinatorBegin (Tree *akinator_for_begin, const int akina
     return AKINATOR_STATUS_OK;
 }
 
-//enum AkinatorFuncStatus AkinatorDescription (const Tree *akinator_tree_for_description) {
-//
-//    AKINATOR_TREE_VERIFY (akinator_tree_for_description)
-//
-//    char *array_ask_for_continue = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
-//    assert (array_ask_for_continue);
-//
-//    ScanUserString (array_for_last_ask, NODE_READ_BUF_SIZE);
-//
-//    TreeElementFind (akinator_tree_for_description);
-//
-//}
+enum AkinatorFuncStatus AkinatorDescription (const Tree *akinator_tree_for_description) {
+
+    AKINATOR_TREE_VERIFY (akinator_tree_for_description)
+
+    char *array_for_description_ask = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
+    assert (array_for_description_ask);
+
+    printf ("What person you have on the mind?\n");
+
+    ScanUserString (array_for_description_ask, NODE_READ_BUF_SIZE);
+
+    Stack stack_tree_path_to_element = {};
+
+    StackCtor (&stack_tree_path_to_element, 1);
+
+    if (TreeElementFind (akinator_tree_for_description,
+                         array_for_description_ask, &stack_tree_path_to_element) == TREE_STATUS_FAIL) {
+
+        printf ("NO MATCHING RESULTS.\n");
+
+        return AKINATOR_STATUS_FAIL;
+    }
+
+    TreeNode *tree_node_current = akinator_tree_for_description -> root;
+
+    printf ("%s is ", array_for_description_ask);
+
+    while (stack_tree_path_to_element.stack_size >= 1) {
+
+        switch (StackPop (&stack_tree_path_to_element)) {
+
+            case 1:
+                printf ("%s, ", tree_node_current -> data);
+                tree_node_current = tree_node_current -> left_branch;
+                break;
+
+            case 0:
+                printf ("not %s, ", tree_node_current -> data);
+                tree_node_current = tree_node_current -> right_branch;
+                break;
+
+            default:
+                fprintf (stderr, "SOMETHING WENT WRONG\n");
+                return AKINATOR_STATUS_FAIL;
+        }
+    }
+
+    printf ("that's all.\n");
+
+    return AKINATOR_STATUS_OK;
+}
