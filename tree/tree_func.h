@@ -2,20 +2,22 @@
 #define TREE_FUNC_H
 
 
+#include "../stack/my_stack_func.h"
+
 #define NIL                     "nil"
 
 #ifndef TREE_DATA_FORMAT
     #define TREE_DATA_FORMAT    "%s"
 #endif
 
-#define DEBUG                   0
+#define DEBUG_TREE               0
 
-#if DEBUG
+#if DEBUG_TREE
 
-    #define ON_DEBUG(...)       {__VA_ARGS__;}
+    #define ON_TREE_DEBUG(...)   {__VA_ARGS__;}
 #else
 
-    #define ON_DEBUG(...)
+    #define ON_TREE_DEBUG(...)
 #endif
 
 #define TREE_VERIFY(tree)   {                                        \
@@ -47,17 +49,17 @@ typedef char* TreeElem_t;
 /// Defines how to check if tree element is poison number.
 #if IS_TREE_ELEM_FLOAT
 
-    const TreeElem_t POISON_NUM = NAN;                  ///< Poison number if tree element type is floating point.
-    #define IS_TREE_ELEM_POISON(x)  isnan ((float) x)   ///< Method to check if tree element is poison.
+    const TreeElem_t TREE_POISON_NUM = NAN;                  m///< Poison number if tree element type is floating point.
+    #define IS_TREE_ELEM_POISON(x)  isnan ((float) x)        ///< Method to check if tree element is poison.
 #else
 
     #if IS_TREE_ELEM_PTR
-        const TreeElem_t POISON_NUM = NULL;             ///< Poison number if tree element type is pointer.
+        const TreeElem_t TREE_POISON_NUM = NULL;             ///< Poison number if tree element type is pointer.
     #else
-        const TreeElem_t POISON_NUM = 0xDEAD;               ///< Poison number if tree element type is integer.
+        const TreeElem_t TREE_POISON_NUM = 0xDEAD;           ///< Poison number if tree element type is integer.
     #endif
 
-    #define IS_TREE_ELEM_POISON(x)  x == POISON_NUM     ///< Method to check if tree element is poison.
+    #define IS_TREE_ELEM_POISON(x)  x == TREE_POISON_NUM     ///< Method to check if tree element is poison.
 #endif
 
 const int NODE_READ_BUF_SIZE = 100;
@@ -110,6 +112,16 @@ enum TreeFuncStatus TreeOutputToFile (FILE *file_for_output_tree, const Tree *tr
 
 enum TreeFuncStatus TreeNodeOutputToFile (FILE *file_for_output_node,
                                           const TreeNode *tree_node_for_output);
+
+enum TreeFuncStatus TreeElementFind (const Tree *tree_for_element_find,
+                                     const TreeElem_t tree_data_to_find);
+
+enum TreeFuncStatus TreeNodeElementFind (const TreeNode *tree_node_for_element_find,
+                                         const TreeElem_t tree_node_data_to_find,
+                                         Stack *tree_node_path_stack);
+
+enum TreeFuncStatus TreeCompareData (const TreeNode *tree_node_for_cmp_data,
+                                     const TreeElem_t data_to_cmp);
 
 enum TreeFuncStatus TreeCycledNodeSearch (const TreeNode *tree_node_for_cycle_search);
 

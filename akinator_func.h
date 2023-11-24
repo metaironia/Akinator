@@ -1,7 +1,7 @@
 #ifndef AKINATOR_FUNC_H
 #define AKINATOR_FUNC_H
 
-#include "tree_func.h"
+#include "tree/tree_func.h"
 
 #define AKINATOR_TREE_VERIFY(tree)       {                                      \
                                              if (TreeVerify (tree) != 0) {      \

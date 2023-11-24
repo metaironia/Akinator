@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include "tree_log.h"
+#include "tree/tree_log.h"
 
 #include "akinator_func.h"
 #include "akinator_input.h"

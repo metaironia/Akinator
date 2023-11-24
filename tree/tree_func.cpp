@@ -4,6 +4,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "../stack/my_stack_func.h"
+
 #include "tree_func.h"
 #include "tree_log.h"
 
@@ -215,6 +217,82 @@ enum TreeFuncStatus TreeNodeOutputToFile (FILE *file_for_output_node,
     fprintf (file_for_output_node, ") ");
 
     return TREE_STATUS_OK;
+}
+
+enum TreeFuncStatus TreeElementFind (const Tree *tree_for_element_find,
+                                     const TreeElem_t tree_data_to_find) {
+
+    TREE_VERIFY (tree_for_element_find);
+
+    if (IS_TREE_ELEM_STRING)
+        assert (tree_data_to_find);
+
+    Stack tree_path_stack = {};
+
+    StackCtor (&tree_path_stack, 1);
+
+    if (TreeNodeElementFind (tree_for_element_find -> root, tree_data_to_find,
+                             &tree_path_stack) == TREE_STATUS_OK)
+
+        return TREE_STATUS_OK;
+
+    return TREE_STATUS_FAIL;
+}
+
+enum TreeFuncStatus TreeNodeElementFind (const TreeNode *tree_node_for_element_find,
+                                         const TreeElem_t tree_node_data_to_find,
+                                         Stack *tree_node_path_stack) {
+
+    if (!tree_node_for_element_find)
+        return TREE_STATUS_FAIL;
+
+    TREE_NODE_VERIFY (tree_node_for_element_find);
+
+    if (IS_TREE_ELEM_STRING)
+        assert (tree_node_data_to_find);
+
+    if (TreeCompareData (tree_node_for_element_find, tree_node_data_to_find) == TREE_STATUS_OK)
+        return TREE_STATUS_OK;
+
+    //recursion below
+
+    if (TreeNodeElementFind (tree_node_for_element_find -> left_branch,
+                             tree_node_data_to_find, tree_node_path_stack) == TREE_STATUS_OK) {
+
+        StackPush (tree_node_path_stack, 1);   //TODO fix nums here
+
+        return TREE_STATUS_OK;
+    }
+
+    if (TreeNodeElementFind (tree_node_for_element_find -> right_branch,
+                             tree_node_data_to_find, tree_node_path_stack) == TREE_STATUS_OK) {
+
+        StackPush (tree_node_path_stack, 0);   //TODO fix nums here
+
+        return TREE_STATUS_OK;
+    }
+
+    return TREE_STATUS_FAIL;
+}
+
+enum TreeFuncStatus TreeCompareData (const TreeNode *tree_node_for_cmp_data,
+                                     const TreeElem_t data_to_cmp) {
+
+    TREE_NODE_VERIFY (tree_node_for_cmp_data);
+
+    if (IS_TREE_ELEM_STRING)
+        assert (data_to_cmp);
+
+    if (IS_TREE_ELEM_STRING)  {
+
+        if (strcmp (data_to_cmp, tree_node_for_cmp_data -> data) == 0)
+            return TREE_STATUS_OK;
+    }
+
+    else if (tree_node_for_cmp_data -> data == data_to_cmp)   //TODO compare double values
+        return TREE_STATUS_OK;
+
+    return TREE_STATUS_FAIL;
 }
 
 unsigned int TreeVerify (const Tree *tree_for_verify) {      //TODO fix copypaste in verifier

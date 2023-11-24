@@ -6,7 +6,8 @@ CXXFLAGS=-Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equ
 	 -Wempty-body -Wformat-security -Wformat=2 -Wignored-qualifiers -Wlogical-op -Wno-missing-field-initializers \
 	 -Wnon-virtual-dtor -Woverloaded-virtual -Wpointer-arith -Wsign-promo -Wstack-usage=8192 -Wstrict-aliasing \
 	 -Wstrict-null-sentinel -Wtype-limits -Wwrite-strings -Werror=vla -D_DEBUG -D_EJUDGE_CLIENT_SIDE 
-SOURCES= main.cpp akinator_func.cpp akinator_input.cpp akinator_output.cpp tree_func.cpp tree_log.cpp
+SOURCES= main.cpp akinator_func.cpp akinator_input.cpp akinator_output.cpp tree/tree_func.cpp tree/tree_log.cpp \
+	 stack/my_stack_func.cpp stack/hash_func.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=akinator
 
@@ -20,3 +21,5 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	 rm -f *.o akinator.exe
+	 rm -f stack/*.o 
+	 rm -f tree/*.o

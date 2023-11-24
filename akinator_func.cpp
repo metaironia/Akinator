@@ -4,8 +4,10 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "tree_func.h"
-#include "tree_log.h"
+#include "stack/my_stack_func.h"
+
+#include "tree/tree_func.h"
+#include "tree/tree_log.h"
 
 #include "akinator_func.h"
 #include "akinator_input.h"
@@ -79,7 +81,7 @@ enum AkinatorFuncStatus AkinatorLastNodeSwap (TreeNode *akinator_node_for_swap,
     akinator_node_for_swap -> left_branch -> data  = user_answer_new_person;
     akinator_node_for_swap -> right_branch -> data = akinator_node_for_swap -> data;
 
-    akinator_node_for_swap -> data = POISON_NUM;
+    akinator_node_for_swap -> data = TREE_POISON_NUM;
 
     return AKINATOR_STATUS_OK;
 }
@@ -123,5 +125,11 @@ enum AkinatorFuncStatus AkinatorBegin (Tree *akinator_for_begin, const int akina
 //
 //    AKINATOR_TREE_VERIFY (akinator_tree_for_description)
 //
+//    char *array_ask_for_continue = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
+//    assert (array_ask_for_continue);
+//
+//    ScanUserString (array_for_last_ask, NODE_READ_BUF_SIZE);
+//
+//    TreeElementFind (akinator_tree_for_description);
 //
 //}
