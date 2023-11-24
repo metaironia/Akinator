@@ -17,9 +17,40 @@ enum AkinatorFuncStatus AkinatorChooseMode (Tree *akinator_tree_for_mode_choose)
 
     AKINATOR_TREE_VERIFY (akinator_tree_for_mode_choose);
 
+    char *array_for_mode_choose = (char *) calloc (MAX_WORD_LENGTH, sizeof (char));
+    assert (array_for_mode_choose);
+
+    AkinatorFuncStatus akinator_status = AKINATOR_STATUS_OK;
+    UserAnswer user_answer_status = USER_ANSWER_ERROR;
+
+    while (user_answer_status == USER_ANSWER_ERROR) {
+
+        printf ("Choose gameplay mode (\"G\" for guess, \"DESC\" to print description, \"DIF\" to print"
+            "differences between two items):\n");
+
+        ScanUserString (array_for_mode_choose, MAX_WORD_LENGTH);
+
+        user_answer_status = USER_ANSWER_OK;
+
+        if (strcmp (array_for_mode_choose, "G") == 0)
+            akinator_status = AkinatorGuess (akinator_tree_for_mode_choose);
+
+        else if (strcmp (array_for_mode_choose, "DESC") == 0)
+            akinator_status = AkinatorDescription (akinator_tree_for_mode_choose);
+
+        else if (strcmp (array_for_mode_choose, "DIF") == 0)
+            akinator_status = AkinatorDifference (akinator_tree_for_mode_choose);
+
+        else {
+
+            printf ("INPUT CORRECT ANSWER!\n");
+
+            user_answer_status = USER_ANSWER_ERROR;
+        }
+    }
 
 
-    return AKINATOR_STATUS_OK;
+    return akinator_status;
 }
 
 enum AkinatorFuncStatus AkinatorGuess (Tree *akinator_tree_database) {

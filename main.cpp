@@ -12,21 +12,16 @@
 int main (int argc, const char *argv[]) {
 
     Tree akinator_tree = {};
-
     TreeCtor (&akinator_tree);
 
-    if (AkinatorBegin (&akinator_tree, argc, argv) == AKINATOR_STATUS_FAIL)
+    if (AkinatorReadDatabase (&akinator_tree, argc, argv) == AKINATOR_STATUS_FAIL)
         return -1;
 
     //TreeGraphDump (&akinator_tree);
 
     do {
 
-        if (AkinatorGuess (&akinator_tree) == AKINATOR_STATUS_FAIL) {
-
-            fprintf (stderr, "ERROR WHILE GUESSING\n");
-            return -2;
-        }
+        AkinatorChooseMode (&akinator_tree);
 
     } while (AkinatorContinue () == USER_ANSWER_YES);
 

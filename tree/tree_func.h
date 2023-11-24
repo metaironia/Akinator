@@ -91,6 +91,13 @@ enum TreeErrors {
     BRANCH_FROM_POISON
 };
 
+enum TreeNextBranch {
+
+    NODE_LEFT_BRANCH = 1,
+    NODE_RIGHT_BRANCH = 0,
+    NODE_NO_BRANCH = -1
+};
+
 enum TreeFuncStatus TreeCtor (Tree *tree_to_create);
 
 TreeNode *CreateTreeNode (void);

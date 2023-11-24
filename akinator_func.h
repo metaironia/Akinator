@@ -39,7 +39,7 @@ enum UserAnswer {
     USER_ANSWER_ERROR
 };
 
-//enum AkinatorFuncStatus AkinatorChooseMode (Tree *akinator_tree_for_mode_choose);
+enum AkinatorFuncStatus AkinatorChooseMode (Tree *akinator_tree_for_mode_choose);
 
 enum AkinatorFuncStatus AkinatorReadDatabase (Tree *akinator_for_begin, const int akinator_argc,
                                               const char **akinator_argv);
