@@ -19,8 +19,12 @@
 #endif
 
 #define TREE_VERIFY(tree)   {                                        \
-                                if (TreeVerify (tree) != 0)          \
+                                if (TreeVerify (tree) != 0) {        \
+                                                                     \
+                                    TreeGraphDump (tree);            \
+                                                                     \
                                     return TREE_STATUS_FAIL;         \
+                                }                                    \
                             }
 
 #define TREE_NODE_VERIFY(tree_node)                                  \
@@ -87,9 +91,9 @@ enum TreeFuncStatus TreeCtor (Tree *tree_to_create);
 
 TreeNode *CreateTreeNode (void);
 
-enum TreeFuncStatus TreeNodeCreateLeftBranch (TreeNode *node_for_add_left_branch);
+enum TreeFuncStatus TreeNodeLeftBranchCreate (TreeNode *node_for_add_left_branch);
 
-enum TreeFuncStatus TreeNodeCreateRightBranch (TreeNode *node_for_add_right_branch);
+enum TreeFuncStatus TreeNodeRightBranchCreate (TreeNode *node_for_add_right_branch);
 
 enum TreeFuncStatus TreeReadFromFile (FILE *file_with_tree, Tree *tree_for_fill);
 

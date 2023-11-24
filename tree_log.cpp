@@ -36,7 +36,7 @@ enum TreeFuncStatus LogPrintTreeError (const char *error_text) {
     return TREE_STATUS_OK;
 }
 
-enum TreeFuncStatus TreeGraphDump (Tree *tree_for_graph_dump) {
+enum TreeFuncStatus TreeGraphDump (const Tree *tree_for_graph_dump) {
 
     assert (tree_for_graph_dump);
 

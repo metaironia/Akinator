@@ -28,7 +28,7 @@ TreeNode *CreateTreeNode (void) {
     return tree_node_ptr;
 }
 
-enum TreeFuncStatus TreeNodeCreateLeftBranch (TreeNode *node_for_add_left_branch) {
+enum TreeFuncStatus TreeNodeLeftBranchCreate (TreeNode *node_for_add_left_branch) {
 
     TREE_NODE_VERIFY (node_for_add_left_branch);
 
@@ -39,7 +39,7 @@ enum TreeFuncStatus TreeNodeCreateLeftBranch (TreeNode *node_for_add_left_branch
     return TREE_STATUS_OK;
 }
 
-enum TreeFuncStatus TreeNodeCreateRightBranch (TreeNode *node_for_add_right_branch) {
+enum TreeFuncStatus TreeNodeRightBranchCreate (TreeNode *node_for_add_right_branch) {
 
     TREE_NODE_VERIFY (node_for_add_right_branch);
 
