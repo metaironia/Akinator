@@ -17,7 +17,7 @@ int main (int argc, const char *argv[]) {
     if (AkinatorReadDatabase (&akinator_tree, argc, argv) == AKINATOR_STATUS_FAIL)
         return -1;
 
-    //TreeGraphDump (&akinator_tree);
+    TreeGraphDump (&akinator_tree);
 
     do {
 

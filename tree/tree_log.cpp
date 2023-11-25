@@ -57,9 +57,9 @@ enum TreeFuncStatus TreeDotFileBegin (FILE *tree_dot_file_begin) {
 
     assert (tree_dot_file_begin);
 
-    fprintf(tree_dot_file_begin, "digraph AkinatorTree{\n"
-                                 "rankdir = TB;\n"
-                                 "graph [bgcolor = white];\n");
+    LOG_PRINT (tree_dot_file_begin, "digraph AkinatorTree{\n"
+                                    "rankdir = TB;\n"
+                                    "graph [bgcolor = white];\n");
 
     return TREE_STATUS_OK;
 }
@@ -68,7 +68,7 @@ enum TreeFuncStatus TreeDotFileEnd (FILE *tree_dot_file_end) {
 
     assert (tree_dot_file_end);
 
-    fprintf(tree_dot_file_end, "\n}\n");
+    LOG_PRINT (tree_dot_file_end, "\n}\n");
 
     return TREE_STATUS_OK;
 }
@@ -80,12 +80,12 @@ enum TreeFuncStatus TreeDotFileCreateElements (FILE *tree_dot_file_gen_elems,
 
     if (tree_node_for_gen_elems) {
 
-        fprintf (tree_dot_file_gen_elems, NODE_START_SYMBOL "%x [shape=record, "
-                                          "style = filled, fillcolor = lightgreen, "
-                                          "fontsize = 16, fontname = \"times bold\", "
-                                          "label=\"" TREE_DATA_FORMAT "\"];\n",
-                                          (int) (tree_node_for_gen_elems),
-                                          tree_node_for_gen_elems -> data);
+        LOG_PRINT (tree_dot_file_gen_elems, NODE_START_SYMBOL "%llx [shape=record, "
+                                            "style = filled, fillcolor = lightgreen, "
+                                            "fontsize = 16, fontname = \"times bold\", "
+                                            "label=\"" TREE_DATA_FORMAT "\"];\n",
+                                            (size_t) (tree_node_for_gen_elems),
+                                            tree_node_for_gen_elems -> data);
 
         TreeDotFileCreateElements (tree_dot_file_gen_elems, tree_node_for_gen_elems -> left_branch);
         TreeDotFileCreateElements (tree_dot_file_gen_elems, tree_node_for_gen_elems -> right_branch);
@@ -102,18 +102,18 @@ enum TreeFuncStatus TreeDotFileDrawArrows (FILE *tree_dot_file_draw,
 
     if (tree_node_for_draw_arrows -> left_branch) {
 
-        fprintf (tree_dot_file_draw, NODE_START_SYMBOL "%x -> " NODE_START_SYMBOL "%x;\n",
-                                     (int) (tree_node_for_draw_arrows),
-                                     (int) (tree_node_for_draw_arrows -> left_branch));
+        LOG_PRINT (tree_dot_file_draw, NODE_START_SYMBOL "%llx -> " NODE_START_SYMBOL "%llx;\n",
+                                       (size_t) (tree_node_for_draw_arrows),
+                                       (size_t) (tree_node_for_draw_arrows -> left_branch));
 
         TreeDotFileDrawArrows (tree_dot_file_draw, tree_node_for_draw_arrows -> left_branch);
     }
 
     if (tree_node_for_draw_arrows -> right_branch) {
 
-        fprintf (tree_dot_file_draw, NODE_START_SYMBOL "%x -> " NODE_START_SYMBOL "%x;\n",
-                                     (int) (tree_node_for_draw_arrows),
-                                     (int) (tree_node_for_draw_arrows -> right_branch));
+        LOG_PRINT (tree_dot_file_draw, NODE_START_SYMBOL "%llx -> " NODE_START_SYMBOL "%llx;\n",
+                                       (size_t) (tree_node_for_draw_arrows),
+                                       (size_t) (tree_node_for_draw_arrows -> right_branch));
 
         TreeDotFileDrawArrows (tree_dot_file_draw, tree_node_for_draw_arrows -> right_branch);
     }

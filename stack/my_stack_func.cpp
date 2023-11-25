@@ -52,7 +52,7 @@ enum StackFuncStatus StackDataCtor (Stack *stk) {
     CANARY_ON (if (stack_size_bytes %  MAX_CANARY_SIZE_BYTES != 0)
                    stack_size_bytes += MAX_CANARY_SIZE_BYTES - (stack_size_bytes % MAX_CANARY_SIZE_BYTES));
 
-    (stk -> data) = (Elem_t *) calloc ((size_t) stack_size_bytes, 1);
+    (stk -> data) = (Elem_t *) calloc (1, (size_t) stack_size_bytes);
 
     CANARY_ON (*(Canary_t *) (stk -> data) = STACK_CANARY);
     CANARY_ON (*(Canary_t *) ((char *) (stk -> data) + stack_size_bytes - MAX_CANARY_SIZE_BYTES) =
@@ -77,8 +77,6 @@ enum StackFuncStatus StackDtor (Stack *stk) {
 
     if (StackDataDtor (stk) != StackFuncStatus::OK)
         return FAIL;
-
-    free (stk);
 
     LOG_PRINT (STACK_LOG_FILE, "\n"
                                "Stack successfully destructed. \n");
@@ -180,7 +178,7 @@ enum StackFuncStatus StackRecalloc (Stack *stk) {
         memcpy ((stk -> data), previous_data,                             //TODO recalloc
                 (size_t) (sizeof (Elem_t) * ((stk -> stack_size))));
 
-        free (previous_data);
+        free (((char *) previous_data) CANARY_ON (- MAX_CANARY_SIZE_BYTES));
 
         HASH_ON (StackDataHashGen (stk));
         HASH_ON (StackHashGen (stk));

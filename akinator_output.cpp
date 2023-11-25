@@ -11,7 +11,7 @@
 #include "akinator_output.h"
 
 enum AkinatorFuncStatus AkinatorExit (const char *file_name_output,
-                                      const Tree *akinator_tree_at_exit) {
+                                      Tree *akinator_tree_at_exit) {
 
     AKINATOR_TREE_VERIFY (akinator_tree_at_exit);
 
@@ -29,12 +29,17 @@ enum AkinatorFuncStatus AkinatorExit (const char *file_name_output,
         TreeOutputToFile (akinator_file_for_write, akinator_tree_at_exit);
 
         fclose (akinator_file_for_write);
-
-        return AKINATOR_STATUS_OK;
     }
 
-    if (strcmp (user_answer, "NO") == 0)
-        return AKINATOR_STATUS_OK;
+    if (strcmp (user_answer, "NO") == 0);
+
+    else
+        return AKINATOR_STATUS_FAIL;
+
+    free (user_answer);
+    user_answer = NULL;
+
+    TreeDestruct (akinator_tree_at_exit);
 
     return AKINATOR_STATUS_FAIL;
 }

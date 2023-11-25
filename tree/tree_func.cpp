@@ -239,6 +239,8 @@ enum TreeFuncStatus TreeNodeElementFind (const TreeNode *tree_node_for_element_f
                                          const TreeElem_t tree_node_data_to_find,
                                          Stack *stack_tree_node_path) {
 
+    assert (stack_tree_node_path);
+
     if (!tree_node_for_element_find)
         return TREE_STATUS_FAIL;
 
@@ -383,11 +385,9 @@ enum TreeFuncStatus TreeNodeFromPoisonSearch (const TreeNode *tree_node_for_pois
 enum TreeFuncStatus TreeNodeDestruct (TreeNode **tree_node_for_destruct) {
 
     assert (tree_node_for_destruct);
-    assert (*tree_node_for_destruct);
 
     if (!(*tree_node_for_destruct))
         return TREE_STATUS_OK;
-
 
     TreeNodeDestruct (&((*tree_node_for_destruct) -> left_branch));
     TreeNodeDestruct (&((*tree_node_for_destruct) -> right_branch));

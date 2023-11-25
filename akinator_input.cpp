@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdint.h>
 
 #include "tree/tree_log.h"
 
@@ -86,7 +87,7 @@ enum StringFuncStatus RemoveSpacesFromStringEnd (char *array_for_remove_end_spac
     assert (array_for_remove_end_spaces);
     assert (size_array_for_space_remove > 0);
 
-    for (int i = size_array_for_space_remove - 1; i >= 0; i--) {
+    for (int64_t i = size_array_for_space_remove - 1; i >= 0; i--) {
 
         if (array_for_remove_end_spaces[i] == '\0')
             continue;

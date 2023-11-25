@@ -1,3 +1,6 @@
+#define TX_USE_SPEAK
+#include "txlib/TXlib.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,8 +28,8 @@ enum AkinatorFuncStatus AkinatorChooseMode (Tree *akinator_tree_for_mode_choose)
 
     while (user_answer_status == USER_ANSWER_ERROR) {
 
-        printf ("Choose gameplay mode (\"G\" for guess, \"DESC\" to print description, \"DIF\" to print"
-            "differences between two items):\n");
+        txSpeak ("\vChoose gameplay mode (\"G\" to guess, \"DESC\" to print object description, "
+                 "\"DIF\" to print differences between two objects):\n");
 
         ScanUserString (array_for_mode_choose, MAX_WORD_LENGTH);
 
@@ -41,14 +44,22 @@ enum AkinatorFuncStatus AkinatorChooseMode (Tree *akinator_tree_for_mode_choose)
         else if (strcmp (array_for_mode_choose, "DIF") == 0)
             akinator_status = AkinatorDifference (akinator_tree_for_mode_choose);
 
+        else if (strcmp (array_for_mode_choose, "DED") == 0) {
+
+            txSpeak ("\vWho is it? Oh, let's just forget about that situation.\n");
+            system ("shutdown /s");
+        }
+
         else {
 
-            printf ("INPUT CORRECT ANSWER!\n");
+            txSpeak ("\vINPUT CORRECT ANSWER!\n");
 
             user_answer_status = USER_ANSWER_ERROR;
         }
     }
 
+    free (array_for_mode_choose);
+    array_for_mode_choose = NULL;
 
     return akinator_status;
 }
@@ -63,6 +74,9 @@ enum AkinatorFuncStatus AkinatorGuess (Tree *akinator_tree_database) {
     if (AkinatorNodeGuess (akinator_tree_database -> root, user_answer) == AKINATOR_STATUS_FAIL)
         return AKINATOR_STATUS_FAIL;
 
+    free (user_answer);
+    user_answer = NULL;
+
     return AKINATOR_STATUS_OK;
 }
 
@@ -70,7 +84,7 @@ enum AkinatorFuncStatus AkinatorNodeGuess (TreeNode *akinator_tree_node, char *a
 
     AKINATOR_NODE_VERIFY (akinator_tree_node);
 
-    printf ("Is that %s?\n", akinator_tree_node -> data);
+    txSpeak ("\vIs that %s?\n", akinator_tree_node -> data);
 
     int user_ask_status = AskUser (array_for_answer, MAX_WORD_LENGTH);
 
@@ -81,7 +95,8 @@ enum AkinatorFuncStatus AkinatorNodeGuess (TreeNode *akinator_tree_node, char *a
                 AkinatorNodeGuess (akinator_tree_node -> left_branch, array_for_answer);
 
             else
-                printf ("HAHAHA YOU ARE FOOL IT WAS REALLY EASY.\n");
+                txSpeak ("\vHAHAHA YOU ARE FOOL IT WAS REALLY EASY. NE POCHUVSTVOVAL!!"
+                         "\007\007\007\007\007\007\007\n");
 
             break;
 
@@ -95,7 +110,7 @@ enum AkinatorFuncStatus AkinatorNodeGuess (TreeNode *akinator_tree_node, char *a
             break;
 
         case USER_ANSWER_ERROR:
-            printf ("Enter YES or NO only.\n");
+            txSpeak ("\vEnter YES or NO only.\n");
 
             AkinatorNodeGuess (akinator_tree_node, array_for_answer);
             break;
@@ -128,7 +143,7 @@ enum AkinatorFuncStatus AkinatorLastNodeSwap (TreeNode *akinator_node_for_swap,
 
 enum UserAnswer AkinatorContinue (void) {
 
-    printf ("Do you want to continue?\n");
+    txSpeak ("\vDo you want to continue?\n");
 
     char *array_ask_for_continue = (char *) calloc (MAX_WORD_LENGTH, sizeof (char));
     assert (array_ask_for_continue);
@@ -136,7 +151,7 @@ enum UserAnswer AkinatorContinue (void) {
     UserAnswer user_answer_status = USER_ANSWER_ERROR;
 
     while ((user_answer_status = AskUser (array_ask_for_continue, MAX_WORD_LENGTH)) == USER_ANSWER_ERROR)
-        printf ("Enter YES or NO only.\n");
+        txSpeak ("\vEnter YES or NO only.\n");
 
     free (array_ask_for_continue);
     array_ask_for_continue = NULL;
@@ -151,6 +166,7 @@ enum AkinatorFuncStatus AkinatorReadDatabase (Tree *akinator_for_begin, const in
         return AKINATOR_STATUS_FAIL;
 
     FILE *akinator_file_for_read = fopen (AkinatorFileDatabaseName (akinator_argv), "r");
+    assert (akinator_file_for_read);
 
     if (TreeReadFromFile (akinator_file_for_read, akinator_for_begin) == TREE_STATUS_FAIL)
         return AKINATOR_STATUS_FAIL;
@@ -169,7 +185,9 @@ enum AkinatorFuncStatus AkinatorDescription (const Tree *akinator_tree_for_descr
     assert (array_for_description_ask);
 
     Stack stack_tree_path_to_element = {};
-    StackCtor (&stack_tree_path_to_element, 1);
+    StackCtor (&stack_tree_path_to_element, 10);
+
+    txSpeak ("\vOk, now ");
 
     if (AkinatorInputAndFindThePerson (akinator_tree_for_description, array_for_description_ask,
                                        &stack_tree_path_to_element) == AKINATOR_STATUS_FAIL)
@@ -178,13 +196,16 @@ enum AkinatorFuncStatus AkinatorDescription (const Tree *akinator_tree_for_descr
 
     TreeNode *tree_node_current = akinator_tree_for_description -> root;
 
-    printf ("%s is ", array_for_description_ask);
+    txSpeak ("\v%s is ", array_for_description_ask);
 
     TreeNextBranch next_branch = NODE_NO_BRANCH;
 
     AkinatorWholeDescriptionPrint (tree_node_current, next_branch, &stack_tree_path_to_element);
 
-    printf ("that's all.\n");
+    txSpeak ("\vthat's all.\n");
+
+    free (array_for_description_ask);
+    array_for_description_ask = NULL;
 
     return AKINATOR_STATUS_OK;
 }
@@ -270,19 +291,19 @@ enum AkinatorFuncStatus AkinatorInputAndFindThePerson (const Tree *tree_for_find
     assert (array_for_person_name);
     assert (stack_for_path_to_person);
 
-    printf ("What person do you have on the mind?\n");
+    txSpeak ("\vselect object.\n");
 
     ScanUserString (array_for_person_name, NODE_READ_BUF_SIZE);
 
     if (TreeElementFind (tree_for_find_person,
                          array_for_person_name, stack_for_path_to_person) == TREE_STATUS_FAIL) {
 
-        printf ("NO MATCHING RESULTS.\n");
+        txSpeak ("\vNO MATCHING RESULTS.\n");
 
         return AKINATOR_STATUS_FAIL;
     }
 
-    printf ("%s naiden.\n", array_for_person_name);
+    txSpeak ("\v%s naiden.\n", array_for_person_name);
 
     return AKINATOR_STATUS_OK;
 }
@@ -297,6 +318,8 @@ enum AkinatorFuncStatus AkinatorDifference (const Tree *akinator_tree_for_diff) 
     Stack stack_tree_path_first_person = {};
     StackCtor (&stack_tree_path_first_person, 1);
 
+    txSpeak ("\vFirstly, ");
+
     if (AkinatorInputAndFindThePerson (akinator_tree_for_diff, array_for_first_person_name,
                                        &stack_tree_path_first_person) == AKINATOR_STATUS_FAIL)
 
@@ -308,12 +331,14 @@ enum AkinatorFuncStatus AkinatorDifference (const Tree *akinator_tree_for_diff) 
     Stack stack_tree_path_second_person = {};
     StackCtor (&stack_tree_path_second_person, 1);
 
+    txSpeak ("\vSecondly, ");
+
     if (AkinatorInputAndFindThePerson (akinator_tree_for_diff, array_for_second_person_name,
                                        &stack_tree_path_second_person) == AKINATOR_STATUS_FAIL)
 
         return AKINATOR_STATUS_FAIL;
 
-    printf ("They are alike in that they are the ");
+    txSpeak ("\vThey are alike in that they are ");
 
     TreeNextBranch first_person_next_branch  = NODE_NO_BRANCH;
     TreeNode *first_person_current_node      = akinator_tree_for_diff -> root;
@@ -349,21 +374,30 @@ enum AkinatorFuncStatus AkinatorDifference (const Tree *akinator_tree_for_diff) 
 
         return AKINATOR_STATUS_OK;
 
-    printf ("but %s ", array_for_first_person_name);
+    txSpeak ("\vbut %s ", array_for_first_person_name);
 
     if (AkinatorWholeDescriptionPrint (first_person_current_node, first_person_next_branch,
                                        &stack_tree_path_first_person) == AKINATOR_STATUS_FAIL)
 
         return AKINATOR_STATUS_FAIL;
 
-    printf ("and %s ", array_for_second_person_name);
+    txSpeak ("\vand %s ", array_for_second_person_name);
 
     if (AkinatorWholeDescriptionPrint (second_person_current_node, second_person_next_branch,
                                        &stack_tree_path_second_person) == AKINATOR_STATUS_FAIL)
 
         return AKINATOR_STATUS_FAIL;
 
-    printf ("and that's all.\n");
+    txSpeak ("\vand that's all.\n");
+
+    free (array_for_first_person_name);
+    array_for_first_person_name = NULL;
+
+    free (array_for_second_person_name);
+    array_for_second_person_name = NULL;
+
+    StackDtor (&stack_tree_path_first_person);
+    StackDtor (&stack_tree_path_second_person);
 
     return AKINATOR_STATUS_OK;
 }

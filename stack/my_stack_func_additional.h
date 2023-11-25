@@ -14,7 +14,7 @@
 #define EL_FORMAT "%d"
 
 /// Printing format of canaries in stack.
-#define CAN_FORMAT "%I64X"
+#define CAN_FORMAT "%llx"
 
 /// Type definition of canaries in stack.
 typedef unsigned long long Canary_t;
