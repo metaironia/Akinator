@@ -5,7 +5,8 @@
 
 enum UserAnswer AskUser (void);
 
-enum UserAnswer AskUserLastNode (TreeNode *akinator_tree_node_for_last_ask);
+enum UserAnswer AskUserLastNode (TreeNode *akinator_tree_node_for_last_ask,
+                                 const char *last_node_object_name);
 
 enum StringFuncStatus ScanUserString (char *array_for_scan, const size_t size_array_for_scan);
 

@@ -95,7 +95,8 @@ enum AkinatorFuncStatus AkinatorNodeGuess (TreeNode *akinator_tree_node) {
                 AkinatorNodeGuess (akinator_tree_node -> right_branch);
 
             else
-                AskUserLastNode (akinator_tree_node);
+                AskUserLastNode (akinator_tree_node,
+                                 akinator_tree_node -> data);
 
             break;
 

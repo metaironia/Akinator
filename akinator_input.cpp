@@ -28,8 +28,10 @@ enum UserAnswer AskUser (void) {
     return USER_ANSWER_ERROR;
 }
 
-enum UserAnswer AskUserLastNode (TreeNode *akinator_tree_node_for_last_ask) {
+enum UserAnswer AskUserLastNode (TreeNode *akinator_tree_node_for_last_ask,
+                                 const char *last_node_object_name) {
 
+    assert (last_node_object_name);
     assert (akinator_tree_node_for_last_ask);
 
     char *user_answer_person = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
@@ -41,7 +43,8 @@ enum UserAnswer AskUserLastNode (TreeNode *akinator_tree_node_for_last_ask) {
 
     AkinatorLastNodeSwap (akinator_tree_node_for_last_ask, user_answer_person);
 
-    txSpeak ("\vWhat is the difference between them?\n");
+    txSpeak ("\vWhat is the difference between %s and %s?\n", user_answer_person,
+                                                              last_node_object_name);
 
     char *user_answer_question = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
     assert (user_answer_question);
