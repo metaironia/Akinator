@@ -17,7 +17,7 @@
                                                  return AKINATOR_STATUS_FAIL;     \
                                          }
 
-const int MAX_WORD_LENGTH = 10;
+const int MAX_WORD_LENGTH = 64;
 
 enum AkinatorFuncStatus {
 
@@ -46,7 +46,7 @@ enum AkinatorFuncStatus AkinatorReadDatabase (Tree *akinator_for_begin, const in
 
 enum AkinatorFuncStatus AkinatorGuess (Tree *akinator_tree_database);
 
-enum AkinatorFuncStatus AkinatorNodeGuess (TreeNode *akinator_tree_node, char *array_for_answer);
+enum AkinatorFuncStatus AkinatorNodeGuess (TreeNode *akinator_tree_node);
 
 enum AkinatorFuncStatus AkinatorLastNodeSwap (TreeNode *akinator_node_for_swap,
                                               char *user_answer_new_person);
@@ -59,7 +59,6 @@ enum AkinatorFuncStatus AkinatorOneDescriptionPrint (const TreeNode *tree_node_f
                                                      const TreeNextBranch node_next_branch);
 
 enum AkinatorFuncStatus AkinatorWholeDescriptionPrint (TreeNode *tree_node_for_desc,
-                                                       TreeNextBranch node_next_branch,
                                                        Stack *stack_tree_path_to_person_print);
 
 enum AkinatorFuncStatus AkinatorBranchSwitch (TreeNode **ptr_tree_node_for_switch,

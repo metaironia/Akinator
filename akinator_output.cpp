@@ -1,3 +1,6 @@
+#define TX_USE_SPEAK
+#include "txlib/TXlib.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,10 +18,9 @@ enum AkinatorFuncStatus AkinatorExit (const char *file_name_output,
 
     AKINATOR_TREE_VERIFY (akinator_tree_at_exit);
 
-    printf ("Do you want to save data?\n");
+    txSpeak ("\vDo you want to save data?\n");
 
-    char *user_answer = (char *) calloc (MAX_WORD_LENGTH, sizeof (char));
-    assert (user_answer);
+    char user_answer[MAX_WORD_LENGTH] = {};
 
     ScanUserString (user_answer, MAX_WORD_LENGTH);
 
@@ -35,9 +37,6 @@ enum AkinatorFuncStatus AkinatorExit (const char *file_name_output,
 
     else
         return AKINATOR_STATUS_FAIL;
-
-    free (user_answer);
-    user_answer = NULL;
 
     TreeDestruct (akinator_tree_at_exit);
 

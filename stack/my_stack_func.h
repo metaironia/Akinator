@@ -71,7 +71,7 @@ typedef int Elem_t;
 /// Constant for canaries in stack.
 const unsigned long long STACK_CANARY = 0xFEE1DEAD;
 
-//const unsigned long long DEFAULT_STACK_CAPACITY = 1;
+const unsigned long long DEFAULT_STACK_CAPACITY = 1;
 
 /// Max possible canary size in bytes.
 const int MAX_CANARY_SIZE_BYTES = 8;

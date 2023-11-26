@@ -20,6 +20,6 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) -c $(CXXFLAGS) $< -o $@
 
 clean:
-	 del *.o akinator.exe
-	 del stack\*.o 
-	 del tree\*.o
+	 rm -f *.o akinator.exe
+	 rm -f stack\*.o 
+	 rm -f tree\*.o

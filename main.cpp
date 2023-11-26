@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "stack/my_stack_func.h"
 
 #include "tree/tree_func.h"

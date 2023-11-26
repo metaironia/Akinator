@@ -1,3 +1,6 @@
+#define TX_USE_SPEAK
+#include "txlib/TXlib.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -10,39 +13,42 @@
 #include "akinator_func.h"
 #include "akinator_input.h"
 
-enum UserAnswer AskUser (char *array_for_ask, const size_t size_of_array_for_ask) {
+enum UserAnswer AskUser (void) {
 
-    assert (array_for_ask);
+    char user_answer_question[MAX_WORD_LENGTH] = {};
 
-    ScanUserString (array_for_ask, size_of_array_for_ask);
+    ScanUserString (user_answer_question, MAX_WORD_LENGTH);
 
-    if (strcmp (array_for_ask, "YES") == 0)
+    if (strcmp (user_answer_question, "YES") == 0)
         return USER_ANSWER_YES;
 
-    if (strcmp (array_for_ask, "NO") == 0)
+    if (strcmp (user_answer_question, "NO") == 0)
         return USER_ANSWER_NO;
 
     return USER_ANSWER_ERROR;
 }
 
-enum UserAnswer AskUserLastNode (TreeNode *akinator_tree_node_for_last_ask,
-                                 char *array_for_last_ask) {
+enum UserAnswer AskUserLastNode (TreeNode *akinator_tree_node_for_last_ask) {
 
     assert (akinator_tree_node_for_last_ask);
 
-    printf ("Who is that?\n");
+    char *user_answer_person = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
+    assert (user_answer_person);
 
-    ScanUserString (array_for_last_ask, NODE_READ_BUF_SIZE);
+    txSpeak ("\vWho is that?\n");
 
-    AkinatorLastNodeSwap (akinator_tree_node_for_last_ask, array_for_last_ask);
+    ScanUserString (user_answer_person, NODE_READ_BUF_SIZE);
 
-    printf ("What is the difference between them?\n");
+    AkinatorLastNodeSwap (akinator_tree_node_for_last_ask, user_answer_person);
 
-    char *array_new_question_node = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
+    txSpeak ("\vWhat is the difference between them?\n");
 
-    ScanUserString (array_new_question_node, NODE_READ_BUF_SIZE);
+    char *user_answer_question = (char *) calloc (NODE_READ_BUF_SIZE, sizeof (char));
+    assert (user_answer_question);
 
-    akinator_tree_node_for_last_ask -> data = array_new_question_node;
+    ScanUserString (user_answer_question, NODE_READ_BUF_SIZE);
+
+    akinator_tree_node_for_last_ask -> data = user_answer_question;
 
     return USER_ANSWER_OK;
 }
@@ -57,7 +63,7 @@ enum StringFuncStatus ScanUserString (char *array_for_scan, const size_t size_ar
 
     if (CheckIfStringTooLong (array_for_scan, size_array_for_scan) == STRING_STATUS_FAIL) {
 
-        printf ("Your string is too long, try once again.\n");
+        txSpeak ("\vYour string is too long, try once again.\n");
 
         return ScanUserString (array_for_scan, size_array_for_scan);
     }

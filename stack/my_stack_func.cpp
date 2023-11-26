@@ -104,11 +104,12 @@ enum StackFuncStatus StackDataDtor (Stack *stk) {
 
     StackDataReset (stk);
 
-    free ((char *)(stk -> data) CANARY_ON (- MAX_CANARY_SIZE_BYTES));
+    char *ptr_to_stack_data = (char *)(stk -> data) CANARY_ON (- MAX_CANARY_SIZE_BYTES);
 
-    (stk -> data) = NULL;
+    free (ptr_to_stack_data);
+    ptr_to_stack_data = NULL;
 
-    if (stk -> data)
+    if (ptr_to_stack_data)
         return FAIL;
 
     LOG_PRINT (STACK_LOG_FILE, "\n" "Stack data successfully destructed.\n");
